@@ -2,12 +2,6 @@ package br.com.dbc.dbcarapi.service;
 
 
 import br.com.dbc.dbcarapi.dto.ClienteDTO;
-import br.com.vemser.pessoaapi.dto.EnderecoDTO;
-import br.com.vemser.pessoaapi.dto.PessoaDTO;
-import br.com.vemser.pessoaapi.entity.Endereco;
-import br.com.vemser.pessoaapi.entity.Pessoa;
-import br.com.vemser.pessoaapi.entity.TipoDeMensagem;
-import br.com.vemser.pessoaapi.exceptions.RegraDeNegocioException;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import lombok.RequiredArgsConstructor;
@@ -41,72 +35,26 @@ public class EmailService {
             mimeMessageHelper.setFrom(from);
             mimeMessageHelper.setTo(clienteDTO.getEmail());
             if (tipo.equalsIgnoreCase("alugado")) {
-                mimeMessageHelper.setSubject("Parabéns! Você alugou o carroO carro foi adicionado com sucesso ao catálogo.");
-            } else if (tipo.equalsIgnoreCase("update")) {
-                mimeMessageHelper.setSubject("Parabéns! Os dados do carro foram atualizados com sucessoalizados com sucesso!");
-            } else if (tipo.equals(TipoDeMensagem.DELETE.getTipo())) {
-                mimeMessageHelper.setSubject("Seus dados foram apagados do nosso sistema!");
+                mimeMessageHelper.setSubject("Parabéns! Você alugou o carro com sucesso!");
             }
-            mimeMessageHelper.setText(getContentFromTemplatePessoa(pessoaDTO, tipo), true);
+            mimeMessageHelper.setText(getContentFromTemplatePessoa(clienteDTO, tipo), true);
             emailSender.send(mimeMessageHelper.getMimeMessage());
         } catch (MessagingException | IOException | TemplateException e) {
             e.printStackTrace();
         }
     }
 
-    public String getContentFromTemplatePessoa(PessoaDTO pessoaDTO, String tipo) throws IOException, TemplateException {
+    public String getContentFromTemplatePessoa(ClienteDTO clienteDTO, String tipo) throws IOException, TemplateException {
         Map<String, Object> dados = new HashMap<>();
-        dados.put("nome", pessoaDTO.getNome());
-        dados.put("id", pessoaDTO.getIdPessoa());
+        dados.put("nome", clienteDTO.getNome());
+        dados.put("id", clienteDTO.getIdCliente());
         dados.put("email", from);
 
-        Template template;
-        if (tipo.equals(TipoDeMensagem.CREATE.getTipo())) {
-            template = fnConfiguration.getTemplate("emailCreatePessoa-template.ftl");
-        } else if (tipo.equals(TipoDeMensagem.UPDATE.getTipo())) {
-            template = fnConfiguration.getTemplate("emailUpdatePessoa-template.ftl");
-        } else {
-            template = fnConfiguration.getTemplate("emailDeletePessoa-template.ftl");
+        Template template = null;
+        if (tipo.equalsIgnoreCase("alugado")) {
+            template = fnConfiguration.getTemplate("emailAluguelCarro-template.ftl");
         }
-        String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, dados);
-        return html;
-    }
 
-    public void sendEmailEndereco(PessoaDTO pessoaDTO, EnderecoDTO enderecoDTO, String tipo) {
-        MimeMessage mimeMessage = emailSender.createMimeMessage();
-        try {
-            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
-            mimeMessageHelper.setFrom(from);
-            mimeMessageHelper.setTo(pessoaDTO.getEmail());
-            if (tipo.equals(TipoDeMensagem.CREATE.getTipo())) {
-                mimeMessageHelper.setSubject("Seu novo endereço foi adicionado!");
-            } else if (tipo.equals(TipoDeMensagem.UPDATE.getTipo())) {
-                mimeMessageHelper.setSubject("Seus dados de endereço foram atualizados!");
-            } else if (tipo.equals(TipoDeMensagem.DELETE.getTipo())) {
-                mimeMessageHelper.setSubject("Seus dados de endereço foram apagados de nosso sistema!");
-            }
-            mimeMessageHelper.setText(getContentFromTemplateEndereco(pessoaDTO, enderecoDTO, tipo), true);
-            emailSender.send(mimeMessageHelper.getMimeMessage());
-        } catch (MessagingException | IOException | TemplateException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public String getContentFromTemplateEndereco(PessoaDTO pessoaDTO, EnderecoDTO enderecoDTO, String tipo) throws IOException, TemplateException {
-        Map<String, Object> dados = new HashMap<>();
-        dados.put("nome", pessoaDTO.getNome());
-        dados.put("id", pessoaDTO.getIdPessoa());
-        dados.put("idEndereco", enderecoDTO.getIdEndereco());
-        dados.put("email", from);
-
-        Template template;
-        if (tipo.equals(TipoDeMensagem.CREATE.getTipo())) {
-            template = fnConfiguration.getTemplate("emailCreateEndereco-template.ftl");
-        } else if (tipo.equals(TipoDeMensagem.UPDATE.getTipo())) {
-            template = fnConfiguration.getTemplate("emailUpdateEndereco-template.ftl");
-        } else {
-            template = fnConfiguration.getTemplate("emailDeleteEndereco-template.ftl");
-        }
         String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, dados);
         return html;
     }
