@@ -14,6 +14,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 public class CreateEnderecoDTO {
 
+    //todo classe endereço?
     @Schema(description = "Identificador (ID) do cliente")
     private Integer idCliente;
 

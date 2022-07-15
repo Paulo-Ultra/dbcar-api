@@ -13,6 +13,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 public class CreateContatoDTO {
 
+    //todo Classe Contato?
     @Schema(description = "Identificador (ID) do cliente")
     private Integer idCliente;
 
