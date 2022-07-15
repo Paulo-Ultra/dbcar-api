@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 public class CarroCreateDTO {
 
     @Schema(description = "Informativo se o carro esta alugado")
-    @NotBlank(message = "É necessário informar se o veículo está/não alugado.")
+    @NotNull(message = "É necessário informar se o veículo está/não alugado.")
     private Alugado alugado;
 
     @Schema(description = "Nome do carro")
@@ -28,7 +28,7 @@ public class CarroCreateDTO {
     private String marca;
 
     @Schema(description = "Classe do carro")
-    @NotBlank(message = "A classe do veículo não pode ser nula/vazia.")
+    @NotNull(message = "A classe do veículo não pode ser nula/vazia.")
     private ClasseCarro classe;
 
     @Schema(description = "Quantidade de passageiros que o veículo suporta")
