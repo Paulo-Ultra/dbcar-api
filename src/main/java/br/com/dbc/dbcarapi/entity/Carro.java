@@ -1,5 +1,7 @@
 package br.com.dbc.dbcarapi.entity;
 
+import br.com.dbc.dbcarapi.enums.Alugado;
+import br.com.dbc.dbcarapi.enums.ClasseCarro;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,10 +14,10 @@ import java.util.Objects;
 @NoArgsConstructor
 public class Carro {
     private Integer idCarro;
-    private String alugado;
+    private Alugado alugado;
     private String nomeCarro;
     private String marca;
-    private String classe;
+    private ClasseCarro classe;
     private Integer qntPassageiros;
     private Integer kmRodados;
     private Double precoDiaria;

@@ -1,5 +1,6 @@
 package br.com.dbc.dbcarapi.entity;
 
+import br.com.dbc.dbcarapi.enums.ClasseCarro;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,16 +26,15 @@ public class Aluguel {
     }
 
     public Double calcularDiaria() {
-        switch (carro.getClasse()) {
-            case "A":
-                return diasComCarro() * carro.getPrecoDiaria() * 1.5;
-            case "B":
-                return diasComCarro() * carro.getPrecoDiaria() * 1.2;
-            case "C":
-                return diasComCarro() * carro.getPrecoDiaria();
-            default:
-                System.out.println("O carro informado não está disponível.");
-                return null;
+        if (carro.getClasse().equals(ClasseCarro.A.getTipo())) {
+            return diasComCarro() * carro.getPrecoDiaria() * 1.5;
+        } else if (carro.getClasse().equals(ClasseCarro.B.getTipo())) {
+            return diasComCarro() * carro.getPrecoDiaria() * 1.2;
+        } else if (carro.getClasse().equals(ClasseCarro.C.getTipo())) {
+            return diasComCarro() * carro.getPrecoDiaria();
+        } else {
+            System.out.println("O carro informado não está disponível.");
+            return null;
         }
     }
 

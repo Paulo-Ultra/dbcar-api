@@ -26,16 +26,16 @@ public class CarroRepository implements Repository {
     @Override
     public List findAll() {
         try {
-            PreparedStatement stmt = con.prepareStatement("SELECT * FROM cars");
+            PreparedStatement stmt = con.prepareStatement("SELECT * FROM CARRO");
             ResultSet result = stmt.executeQuery();
 
-            List<Carro> cars = new ArrayList<>();
+            List<Carro> carros = new ArrayList<>();
 
             while (result.next()) {
-                cars.add(compile(result));
+                carros.add(compile(result));
             }
 
-            return cars;
+            return carros;
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -84,7 +84,7 @@ public class CarroRepository implements Repository {
     }
 
     @Override
-    public Carro update(Integer id, Carro carro) throws BancoDeDadosException {
+    public Carro update(Integer idCarro, Carro carro) throws BancoDeDadosException {
         try {
             con = ConexaoBancoDeDados.getConnection();
 
@@ -108,7 +108,7 @@ public class CarroRepository implements Repository {
             stmt.setInt(5, carro.getQntPassageiros());
             stmt.setInt(6, carro.getKmRodados());
             stmt.setDouble(7, carro.getPrecoDiaria());
-            stmt.setInt(8, id);
+            stmt.setInt(8, idCarro);
 
             int res = stmt.executeUpdate();
             return carro;
@@ -126,7 +126,7 @@ public class CarroRepository implements Repository {
     }
 
     @Override
-    public void delete(Integer id) throws BancoDeDadosException {
+    public void delete(Integer idCarro) throws BancoDeDadosException {
         try {
             con = ConexaoBancoDeDados.getConnection();
 
@@ -134,7 +134,7 @@ public class CarroRepository implements Repository {
 
             PreparedStatement stmt = con.prepareStatement(sql);
 
-            stmt.setInt(1, id);
+            stmt.setInt(1, idCarro);
 
             int res = stmt.executeUpdate();
         } catch (SQLException e) {
@@ -151,9 +151,9 @@ public class CarroRepository implements Repository {
     }
 
     @Override
-    public Carro findById(Integer id) {
+    public Carro findById(Integer idCarro) {
         try {
-            PreparedStatement stmt = con.prepareStatement("SELECT * FROM cars WHERE id = " + id);
+            PreparedStatement stmt = con.prepareStatement("SELECT * FROM CARRO WHERE id = " + idCarro);
             ResultSet result = stmt.executeQuery();
 
             if (result.next()) {
@@ -164,7 +164,6 @@ public class CarroRepository implements Repository {
         } finally {
             ConexaoBancoDeDados.closeConnection();
         }
-
         return null;
     }
 

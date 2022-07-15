@@ -13,6 +13,7 @@ public class Cliente extends Usuario{
     private String cpf;
     private String telefone;
     private String endereco;
+    private String email;
 
     @Override
     public boolean equals(Object o) {
@@ -24,22 +25,12 @@ public class Cliente extends Usuario{
         Cliente cliente = (Cliente) o;
         return Objects.equals(getIdUsuario(), cliente.getIdUsuario()) && Objects.equals(getNome(), cliente.getNome())
                 && Objects.equals(getCpf(), cliente.getCpf()) && Objects.equals(telefone, cliente.telefone)
-                && Objects.equals(endereco, cliente.endereco);
+                && Objects.equals(endereco, cliente.endereco)
+                && Objects.equals(email, cliente.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getIdUsuario(), getNome(), cpf, telefone, endereco);
-    }
-
-    @Override
-    public String toString() {
-        return "{"
-                + "\"idUsuario\": " + getIdUsuario() + ", "
-                + "\"Nome\": \"" + getNome() + "\", "
-                + "\"CPF\": \"" + getCpf() + "\", "
-                + "\"Telefone\": \"" + getTelefone() + "\", "
-                + "\"Endereço\": \"" + getEndereco()
-                + "\"}";
+        return Objects.hash(getIdUsuario(), getNome(), cpf, telefone, endereco, email);
     }
 }

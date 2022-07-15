@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Data
 @AllArgsConstructor
@@ -15,6 +16,14 @@ public class ClienteCreateDTO extends UsuarioDTO {
     @Schema(description = "CPF do cliente")
     @NotBlank
     private String cpf;
+
+    @Schema(description = "Telefone para contato")
+    @NotBlank
+    private String telefone;
+
+    @Schema(description = "Endereço do cliente")
+    @NotBlank
+    private String endereco;
 
     @Schema(description = "E-mail do cliente")
     @NotBlank

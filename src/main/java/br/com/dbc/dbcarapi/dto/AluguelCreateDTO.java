@@ -15,10 +15,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class AluguelCreateDTO {
 
-    //todo Verificar o porquê do ID no Create DTO do aluguel
-//    @Schema(description = "Identificador (ID) do aluguel")
-//    private Integer idAluguel;
-
     @Schema(description = "Carro associado ao aluguel")
     @NotNull
     private Carro carro;

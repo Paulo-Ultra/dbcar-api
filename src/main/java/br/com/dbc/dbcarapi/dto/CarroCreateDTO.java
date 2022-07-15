@@ -1,5 +1,7 @@
 package br.com.dbc.dbcarapi.dto;
 
+import br.com.dbc.dbcarapi.enums.Alugado;
+import br.com.dbc.dbcarapi.enums.ClasseCarro;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,7 +29,7 @@ public class CarroCreateDTO {
 
     @Schema(description = "Classe do carro")
     @NotBlank(message = "A classe do veículo não pode ser nula/vazia.")
-    private String classe;
+    private ClasseCarro classe;
 
     @Schema(description = "Quantidade de passageiros que o veículo suporta")
     @NotNull(message = "A quantidade de passageiros não pode ser nula.")
