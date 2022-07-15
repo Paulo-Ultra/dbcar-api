@@ -1,40 +1,47 @@
 package br.com.dbc.dbcarapi.connection;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.RequestScope;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+@Component
 public class ConexaoBancoDeDados {
 
-    private static final String SERVER = "vemser-dbc.dbccompany.com.br";
-    private static final String PORT = "25000"; // Porta TCP padrão do Oracle
-    private static final String DATABASE = "xe";
+    @Value("${jdbc-string}")
+    private String jdbcString;
 
-    // Configuração dos parâmetros de autenticação
-    private static final String USER = "EQUIPE_2";
-    private static final String PASS = "IokmaoAIYSh";
+    @Value("${jdbc-user}")
+    private String user;
 
-    public static Connection getConnection() throws SQLException {
-        String url = "jdbc:oracle:thin:@" + SERVER + ":" + PORT + ":" + DATABASE;
+    @Value("${jdbc-pass}")
+    private String pass;
 
-        // Abre-se a conexão com o Banco de Dados
-        Connection con = DriverManager.getConnection(url, USER, PASS);
+    @Value("${jdbc-schema}")
+    private String schema;
 
-        // sempre usar o schema vem_ser
-        con.createStatement().execute("alter session set current_schema=EQUIPE_2");
 
+    @Bean
+    @RequestScope
+    public Connection getConnection() throws SQLException {
+
+        Connection con = DriverManager.getConnection(jdbcString, user, pass);
+        con.createStatement().execute("alter session set current_schema=" + schema);
         return con;
     }
 
-    public static boolean closeConnection() {
-        try {
-
-            ConexaoBancoDeDados.getConnection().close();
-            return true;
-
-        } catch (SQLException e) {
-            return false;
-        }
-    }
-}
+//    public static boolean closeConnection() {
+//        try {
+//
+//            ConexaoBancoDeDados.getConnection().close();
+//            return true;
+//
+//        } catch (SQLException e) {
+//            return false;
+//        }
+//    }
 }

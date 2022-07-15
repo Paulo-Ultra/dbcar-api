@@ -2,16 +2,21 @@ package br.com.dbc.dbcarapi.repository;
 
 import br.com.dbc.dbcarapi.connection.ConexaoBancoDeDados;
 import br.com.dbc.dbcarapi.entity.Carro;
+import br.com.dbc.dbcarapi.enums.Alugado;
+import br.com.dbc.dbcarapi.enums.ClasseCarro;
 import br.com.dbc.dbcarapi.exception.BancoDeDadosException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@org.springframework.stereotype.Repository
 public class CarroRepository implements Repository {
 
+    @Autowired
     private Connection con;
-    @Override
+
     public Integer getProximoId(Connection connection) throws SQLException {
         String sql = "SELECT seq_carro.nextval mysequence from DUAL";
 
@@ -23,6 +28,7 @@ public class CarroRepository implements Repository {
         }
         return null;
     }
+
     @Override
     public List findAll() {
         try {
@@ -44,7 +50,6 @@ public class CarroRepository implements Repository {
         return null;
     }
 
-    @Override
     public Carro create(Carro carro) throws BancoDeDadosException {
         try {
             con = ConexaoBancoDeDados.getConnection();
@@ -59,10 +64,10 @@ public class CarroRepository implements Repository {
             PreparedStatement stmt = con.prepareStatement(sql);
 
             stmt.setInt(1, carro.getIdCarro());
-            stmt.setString(2, carro.getAlugado());
+            stmt.setInt(2, carro.getAlugado().getStatus());
             stmt.setString(3, carro.getNomeCarro());
             stmt.setString(4, carro.getMarca());
-            stmt.setString(5, carro.getClasse());
+            stmt.setInt(5, carro.getClasse().getTipo());
             stmt.setInt(6, carro.getQntPassageiros());
             stmt.setInt(7, carro.getKmRodados());
             stmt.setDouble(8, carro.getPrecoDiaria());
@@ -83,7 +88,7 @@ public class CarroRepository implements Repository {
         }
     }
 
-    @Override
+
     public Carro update(Integer idCarro, Carro carro) throws BancoDeDadosException {
         try {
             con = ConexaoBancoDeDados.getConnection();
@@ -101,10 +106,10 @@ public class CarroRepository implements Repository {
 
             PreparedStatement stmt = con.prepareStatement(sql.toString());
 
-            stmt.setString(1, carro.getAlugado());
+            stmt.setInt(1, carro.getAlugado().getStatus());
             stmt.setString(2, carro.getNomeCarro());
             stmt.setString(3, carro.getMarca());
-            stmt.setString(4, carro.getClasse());
+            stmt.setInt(4, carro.getClasse().getTipo());
             stmt.setInt(5, carro.getQntPassageiros());
             stmt.setInt(6, carro.getKmRodados());
             stmt.setDouble(7, carro.getPrecoDiaria());
@@ -125,7 +130,6 @@ public class CarroRepository implements Repository {
         }
     }
 
-    @Override
     public void delete(Integer idCarro) throws BancoDeDadosException {
         try {
             con = ConexaoBancoDeDados.getConnection();
@@ -150,7 +154,6 @@ public class CarroRepository implements Repository {
         }
     }
 
-    @Override
     public Carro findById(Integer idCarro) {
         try {
             PreparedStatement stmt = con.prepareStatement("SELECT * FROM CARRO WHERE id = " + idCarro);
@@ -172,10 +175,10 @@ public class CarroRepository implements Repository {
             Carro carro = new Carro();
 
             carro.setIdCarro(result.getInt("id_carro"));
-            carro.setAlugado(result.getString("alugado"));
+            carro.setAlugado(Alugado.ofTipo(result.getInt("alugado")));
             carro.setNomeCarro(result.getString("nome"));
             carro.setMarca(result.getString("marca"));
-            carro.setClasse(result.getString("classe"));
+            carro.setClasse(ClasseCarro.ofTipo(result.getInt("classe")));
             carro.setQntPassageiros(result.getInt("quantidade_pasageiros"));
             carro.setKmRodados(result.getInt("km_rodados"));
             carro.setPrecoDiaria(result.getDouble("preco_diaria"));
