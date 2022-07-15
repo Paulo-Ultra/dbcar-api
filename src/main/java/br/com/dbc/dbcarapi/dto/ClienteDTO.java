@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CarroDTO extends CarroCreateDTO {
+public class ClienteDTO extends ClienteCreateDTO {
 
-    @Schema(description = "Identificador (ID) do carro")
-    private Integer idCarro;
+    @Schema
+    private Integer idCliente;
 }

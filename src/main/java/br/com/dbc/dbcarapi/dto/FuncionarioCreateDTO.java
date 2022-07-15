@@ -5,11 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CarroDTO extends CarroCreateDTO {
+public class FuncionarioCreateDTO extends UsuarioDTO {
 
-    @Schema(description = "Identificador (ID) do carro")
-    private Integer idCarro;
+    @Schema(description = "Matricula do funcionário")
+    @NotBlank
+    private String matricula;
 }
