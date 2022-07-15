@@ -4,20 +4,20 @@ import java.util.Arrays;
 
 public enum Alugado {
 
-    ALUGADO(1),
-    DISPONIVEL(2);
+    ALUGADO("N"),
+    DISPONIVEL("S");
 
-    private Integer status;
+    private String status;
 
-    Alugado(Integer status) {
+    Alugado(String status) {
         this.status = status;
     }
 
-    public Integer getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public static Alugado ofTipo(Integer status) {
+    public static Alugado ofTipo(String status) {
         return Arrays.stream(Alugado.values())
                 .filter(st -> st.getStatus().equals(status))
                 .findFirst()

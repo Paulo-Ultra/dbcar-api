@@ -4,21 +4,21 @@ import java.util.Arrays;
 
 public enum ClasseCarro {
 
-    A(1),
-    B(2),
-    C(3);
+    A("A"),
+    B("B"),
+    C("C");
 
-    private Integer tipo;
+    private String tipo;
 
-    ClasseCarro(Integer tipo) {
+    ClasseCarro(String tipo) {
         this.tipo = tipo;
     }
 
-    public Integer getTipo() {
+    public String getTipo() {
         return tipo;
     }
 
-    public static ClasseCarro ofTipo(Integer tipo) {
+    public static ClasseCarro ofTipo(String tipo) {
         return Arrays.stream(ClasseCarro.values())
                 .filter(c -> c.getTipo().equals(tipo))
                 .findFirst()
