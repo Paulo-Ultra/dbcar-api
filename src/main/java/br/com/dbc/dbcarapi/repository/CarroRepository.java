@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @org.springframework.stereotype.Repository
-public class CarroRepository implements Repository {
+public class CarroRepository implements Repository<Integer, Carro> {
 
     @Autowired
     private Connection con;
@@ -30,26 +30,35 @@ public class CarroRepository implements Repository {
     }
 
     @Override
-    public List findAll() {
+    public List<Carro> findAllCarros() {
+        List<Carro> carros = new ArrayList<>();
         try {
-            PreparedStatement stmt = con.prepareStatement("SELECT * FROM CARRO");
-            ResultSet result = stmt.executeQuery();
+            con = ConexaoBancoDeDados.getConnection();
+            Statement stmt = con.createStatement();
 
-            List<Carro> carros = new ArrayList<>();
+            String sql = "SELECT * FROM CARRO";
 
-            while (result.next()) {
-                carros.add(compile(result));
+            ResultSet res = stmt.executeQuery(sql);
+
+            while (res.next()) {
+                Carro carro = getCarro(res);
+                carros.add(carro);
             }
-
-            return carros;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BancoDeDadosException(e.getCause());
         } finally {
-            ConexaoBancoDeDados.closeConnection();
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
-        return null;
+        return carros;
     }
 
+    @Override
     public Carro create(Carro carro) throws BancoDeDadosException {
         try {
             con = ConexaoBancoDeDados.getConnection();
@@ -89,6 +98,7 @@ public class CarroRepository implements Repository {
     }
 
 
+    @Override
     public Carro update(Integer idCarro, Carro carro) throws BancoDeDadosException {
         try {
             con = ConexaoBancoDeDados.getConnection();
