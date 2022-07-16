@@ -38,6 +38,18 @@ public class CarroContoller {
         return new ResponseEntity<>(carroService.list(), HttpStatus.OK);
     }
 
+    @Operation(summary = "Listar os carros do catalogo não alugados", description = "Realizará a listagem de todos os carros disponiveis para aluguel no catalogo")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Sucesso! A listagem dos carros disponíveis foi realizada com sucesso"),
+                    @ApiResponse(responseCode = "403", description = "Permissão negada! Você não possui permissão para utilizar este recurso"),
+                    @ApiResponse(responseCode = "500", description = "Erro! Durante a execução, foi gerada uma exceção")
+            }
+    )
+    @GetMapping("disponiveis")
+    public ResponseEntity<List<CarroDTO>> listNaoAlugados() throws BancoDeDadosException {
+        return new ResponseEntity<>(carroService.listNaoAlugados(), HttpStatus.OK);
+    }
     @Operation(summary = "Listar os carros do catalogo pela identificação", description = "Realizará a listagem dos carros disponiveis no catalogo pelo número da identificação")
     @ApiResponses(
             value = {

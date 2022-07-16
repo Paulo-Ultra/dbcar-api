@@ -59,9 +59,7 @@ public class ClienteService {
 
             return convertClienteDTO(clienteEntity);
         }
-        else {
-            throw new BancoDeDadosException("Cliente não encontrado.");
-        }
+        return null;
     }
 
     public Cliente findByIdCliente(Integer idCliente) throws Exception {
