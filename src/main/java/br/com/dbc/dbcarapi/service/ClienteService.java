@@ -33,9 +33,12 @@ public class ClienteService {
     }
 
     public ClienteDTO listByIdCliente(Integer idCliente) throws Exception {
-        return (ClienteDTO) clienteRepository.list().stream()
-                .map(this::convertClienteDTO)
-                .collect(Collectors.toList());
+        Cliente clienteRecuperado = clienteRepository.findByIdCliente(idCliente);
+        if(clienteRecuperado != null){
+            return convertClienteDTO(clienteRecuperado);
+        } else {
+            throw new Exception("Cliente não encontrado");
+        }
     }
 
     public ClienteDTO create(ClienteCreateDTO cliente) throws SQLException {
@@ -51,25 +54,14 @@ public class ClienteService {
 
     public ClienteDTO update(Integer idCliente, ClienteCreateDTO clienteCreateDTO) throws Exception {
         log.info("Atualizando dados do cliente...");
+        listByIdCliente(idCliente);
+        Cliente clienteEntity = convertClienteEntity(clienteCreateDTO);
+        Cliente clienteAtualizar = clienteRepository.update(idCliente, clienteEntity);
+        ClienteDTO clienteDTO = convertClienteDTO(clienteAtualizar);
+        clienteDTO.setIdCliente(idCliente);
+        log.info("Dados do cliente atualizados.");
+        return clienteDTO;
 
-        Cliente clienteRecuperado = clienteRepository.findByIdCliente(idCliente);
-        if (clienteRecuperado != null) {
-
-            Cliente clienteEntity = convertClienteEntity(clienteCreateDTO);
-            clienteEntity.setIdUsuario(clienteRecuperado.getIdUsuario());
-            clienteEntity.setCpf(clienteRecuperado.getCpf());
-            clienteEntity.setTelefone(clienteRecuperado.getTelefone());
-            clienteEntity.setEndereco(clienteRecuperado.getEndereco());
-            clienteEntity.setEmail(clienteRecuperado.getEmail());
-
-            clienteRepository.update(idCliente, clienteEntity);
-
-            log.info("Dados do cliente atualizados.");
-
-            return convertClienteDTO(clienteEntity);
-        } else {
-            throw new Exception("Cliente não atualizado");
-        }
     }
 
     public void delete(Integer idCliente) throws SQLException {

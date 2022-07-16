@@ -94,7 +94,7 @@ public class UsuarioRepository {
         try {
             StringBuilder sql = new StringBuilder();
             sql.append("UPDATE USUARIO SET ");
-            sql.append(" nome = ?, ");
+            sql.append(" nome = ? ");
             sql.append(" WHERE ID_USUARIO = ? ");
 
             PreparedStatement stmt = con.prepareStatement(sql.toString());

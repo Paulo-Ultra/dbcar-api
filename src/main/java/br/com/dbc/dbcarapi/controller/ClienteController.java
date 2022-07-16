@@ -50,7 +50,7 @@ public class ClienteController {
                     @ApiResponse(responseCode = "500", description = "Erro! Durante a execução, foi gerada uma exceção")
             }
     )
-    @GetMapping("/idCliente")
+    @GetMapping("/{idCliente}")
     public ResponseEntity<ClienteDTO> listByIdCliente(Integer idCliente) throws Exception {
         return new ResponseEntity<>(clienteService.listByIdCliente(idCliente), HttpStatus.OK);
     }

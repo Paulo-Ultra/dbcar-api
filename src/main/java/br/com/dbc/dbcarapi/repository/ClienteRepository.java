@@ -77,8 +77,6 @@ public class ClienteRepository {
         Connection con = conexaoBancoDeDados.getConnection();
         try {
             cliente.setIdCliente(getProximoIdCliente(con));
-            cliente.setIdUsuario(getProximoIdUsuario(con));
-
             String sql = "INSERT INTO CLIENTE\n" +
                     "(ID_CLIENTE, ID_USUARIO, CPF, TELEFONE, ENDERECO, EMAIL)\n" +
                     "VALUES(?, ?, ?, ?, ?, ?)\n";
