@@ -1,5 +1,6 @@
 package br.com.dbc.dbcarapi.repository;
 
+import br.com.dbc.dbcarapi.connection.ConexaoBancoDeDados;
 import br.com.dbc.dbcarapi.dto.ClienteCreateDTO;
 import br.com.dbc.dbcarapi.dto.ClienteDTO;
 import br.com.dbc.dbcarapi.entity.Carro;
@@ -16,9 +17,10 @@ import java.util.List;
 public class ClienteRepository {
 
     @Autowired
-    private Connection con;
+    private ConexaoBancoDeDados conexaoBancoDeDados;
 
     public Integer getProximoId(Connection connection) throws SQLException {
+        Connection con = conexaoBancoDeDados.getConnection();
         String sql = "SELECT seq_cliente.nextval mysequence from DUAL";
 
         Statement stmt = connection.createStatement();
@@ -30,7 +32,8 @@ public class ClienteRepository {
         return null;
     }
 
-    public List<Cliente> list() throws BancoDeDadosException {
+    public List<Cliente> list() throws SQLException {
+        Connection con = conexaoBancoDeDados.getConnection();
         List<Cliente> clientes = new ArrayList<>();
         try {
 
@@ -57,7 +60,8 @@ public class ClienteRepository {
         return clientes;
     }
 
-    public Cliente create(Cliente cliente) throws BancoDeDadosException {
+    public Cliente create(Cliente cliente) throws SQLException {
+        Connection con = conexaoBancoDeDados.getConnection();
         try {
             Integer proximoId = this.getProximoId(con);
             cliente.setIdUsuario(proximoId);
@@ -91,7 +95,8 @@ public class ClienteRepository {
         }
     }
 
-    public Cliente update(Integer idCliente, Cliente cliente) throws BancoDeDadosException {
+    public Cliente update(Integer idCliente, Cliente cliente) throws SQLException {
+        Connection con = conexaoBancoDeDados.getConnection();
         try {
             StringBuilder sql = new StringBuilder();
             sql.append("UPDATE CLIENTE SET ");
@@ -124,7 +129,8 @@ public class ClienteRepository {
         }
     }
 
-    public void delete(Integer idCliente) throws BancoDeDadosException {
+    public void delete(Integer idCliente) throws SQLException {
+        Connection con = conexaoBancoDeDados.getConnection();
         try {
             String sql = "DELETE FROM CLIENTE WHERE id_cliente = ?";
             PreparedStatement stmt = con.prepareStatement(sql);
@@ -144,7 +150,8 @@ public class ClienteRepository {
         }
     }
 
-    public Cliente findByIdCliente(Integer idCliente) {
+    public Cliente findByIdCliente(Integer idCliente) throws SQLException {
+        Connection con = conexaoBancoDeDados.getConnection();
         try {
             StringBuilder sql = new StringBuilder("SELECT * FROM CLIENTE C");
             sql.append(" INNER JOIN USUARIO U ON C.ID_USUARIO = U.ID_USUARIO WHERE id_cliente = ?");

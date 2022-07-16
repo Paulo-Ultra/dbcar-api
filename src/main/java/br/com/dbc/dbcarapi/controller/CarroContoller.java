@@ -15,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.sql.SQLException;
 import java.util.List;
 
 @RestController
@@ -34,7 +35,7 @@ public class CarroContoller {
             }
     )
     @GetMapping
-    public ResponseEntity<List<CarroDTO>> list() throws BancoDeDadosException {
+    public ResponseEntity<List<CarroDTO>> list() throws SQLException {
         return new ResponseEntity<>(carroService.list(), HttpStatus.OK);
     }
 
@@ -47,7 +48,7 @@ public class CarroContoller {
             }
     )
     @GetMapping("disponiveis")
-    public ResponseEntity<List<CarroDTO>> listNaoAlugados() throws BancoDeDadosException {
+    public ResponseEntity<List<CarroDTO>> listNaoAlugados() throws SQLException {
         return new ResponseEntity<>(carroService.listNaoAlugados(), HttpStatus.OK);
     }
     @Operation(summary = "Listar os carros do catalogo pela identificação", description = "Realizará a listagem dos carros disponiveis no catalogo pelo número da identificação")
@@ -72,7 +73,7 @@ public class CarroContoller {
             }
     )
     @PostMapping
-    public ResponseEntity<CarroDTO> create(@RequestBody @Valid CarroCreateDTO carro) throws BancoDeDadosException {
+    public ResponseEntity<CarroDTO> create(@RequestBody @Valid CarroCreateDTO carro) throws SQLException {
         return new ResponseEntity<>(carroService.create(carro), HttpStatus.CREATED);
     }
 
@@ -98,7 +99,7 @@ public class CarroContoller {
             }
     )
     @DeleteMapping("/{idCarro}")
-    public ResponseEntity<Void> delete(@PathVariable("idCarro") Integer idCarro) throws BancoDeDadosException {
+    public ResponseEntity<Void> delete(@PathVariable("idCarro") Integer idCarro) throws SQLException {
         carroService.delete(idCarro);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

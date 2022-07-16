@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @RestController
@@ -34,7 +35,7 @@ public class ClienteController {
             }
     )
     @GetMapping
-    public ResponseEntity<List<ClienteDTO>> list() throws BancoDeDadosException {
+    public ResponseEntity<List<ClienteDTO>> list() throws SQLException {
         return new ResponseEntity<>(clienteService.list(), HttpStatus.OK);
     }
 
@@ -60,7 +61,7 @@ public class ClienteController {
             }
     )
     @DeleteMapping("/{idCliente}")
-    public ResponseEntity<Void> delete(@PathVariable("idCliente") Integer idCliente) throws BancoDeDadosException {
+    public ResponseEntity<Void> delete(@PathVariable("idCliente") Integer idCliente) throws SQLException {
         clienteService.delete(idCliente);
         return new ResponseEntity<>(HttpStatus.OK);
     }

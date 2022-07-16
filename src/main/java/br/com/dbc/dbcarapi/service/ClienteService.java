@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,7 +23,7 @@ public class ClienteService {
     @Autowired
     private ClienteRepository clienteRepository;
 
-    public List<ClienteDTO> list() throws BancoDeDadosException {
+    public List<ClienteDTO> list() throws SQLException {
         return clienteRepository.list().stream()
 
                 .map(cliente -> {
@@ -39,7 +40,7 @@ public class ClienteService {
                 .collect(Collectors.toList());
     }
 
-    public ClienteDTO create(ClienteCreateDTO cliente) throws BancoDeDadosException {
+    public ClienteDTO create(ClienteCreateDTO cliente) throws SQLException {
         log.info("Adicionando um novo cliente ao banco de dados...");
 
         Cliente clienteEntity = convertClienteEntity(cliente);
@@ -73,7 +74,7 @@ public class ClienteService {
         }
     }
 
-    public void delete(Integer idCliente) throws BancoDeDadosException {
+    public void delete(Integer idCliente) throws SQLException {
         log.info("Removendo cliente...");
         Cliente verifyCliente = clienteRepository.findByIdCliente(idCliente);
         clienteRepository.delete(idCliente);

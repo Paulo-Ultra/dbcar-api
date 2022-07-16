@@ -1,5 +1,6 @@
 package br.com.dbc.dbcarapi.repository;
 
+import br.com.dbc.dbcarapi.connection.ConexaoBancoDeDados;
 import br.com.dbc.dbcarapi.entity.Carro;
 import br.com.dbc.dbcarapi.enums.Alugado;
 import br.com.dbc.dbcarapi.enums.ClasseCarro;
@@ -14,9 +15,10 @@ import java.util.List;
 public class CarroRepository {
 
     @Autowired
-    private Connection con;
+    private ConexaoBancoDeDados conexaoBancoDeDados;
 
     public Integer getProximoId(Connection connection) throws SQLException {
+        Connection con = conexaoBancoDeDados.getConnection();
         String sql = "SELECT seq_carro.nextval mysequence from DUAL";
 
         Statement stmt = connection.createStatement();
@@ -28,7 +30,8 @@ public class CarroRepository {
         return null;
     }
 
-    public List<Carro> list() throws BancoDeDadosException {
+    public List<Carro> list() throws SQLException {
+        Connection con = conexaoBancoDeDados.getConnection();
         List<Carro> carros = new ArrayList<>();
         try {
             Statement stmt = con.createStatement();
@@ -55,7 +58,8 @@ public class CarroRepository {
         return carros;
     }
 
-    public Carro create(Carro carro) throws BancoDeDadosException {
+    public Carro create(Carro carro) throws SQLException {
+        Connection con = conexaoBancoDeDados.getConnection();
         try {
             Integer proximoId = this.getProximoId(con);
             carro.setIdCarro(proximoId);
@@ -90,7 +94,8 @@ public class CarroRepository {
         }
     }
 
-    public Carro update(Integer idCarro, Carro carro) throws BancoDeDadosException {
+    public Carro update(Integer idCarro, Carro carro) throws SQLException {
+        Connection con = conexaoBancoDeDados.getConnection();
         try {
             StringBuilder sql = new StringBuilder();
             sql.append("UPDATE CARRO SET ");
@@ -129,7 +134,8 @@ public class CarroRepository {
         }
     }
 
-    public void delete(Integer idCarro) throws BancoDeDadosException {
+    public void delete(Integer idCarro) throws SQLException {
+        Connection con = conexaoBancoDeDados.getConnection();
         try {
             String sql = "DELETE FROM CARRO WHERE id_carro = ?";
             PreparedStatement stmt = con.prepareStatement(sql);
@@ -149,7 +155,8 @@ public class CarroRepository {
         }
     }
 
-    public Carro findById(Integer idCarro) throws BancoDeDadosException {
+    public Carro findById(Integer idCarro) throws SQLException {
+        Connection con = conexaoBancoDeDados.getConnection();
         try {
             String sql = "SELECT * FROM CARRO WHERE id_carro = ?";
             PreparedStatement stmt = con.prepareStatement(sql);
@@ -173,7 +180,8 @@ public class CarroRepository {
         return null;
     }
 
-    public boolean editarAlugado(Integer id, Boolean alugado) throws BancoDeDadosException {
+    public boolean editarAlugado(Integer id, Boolean alugado) throws SQLException {
+        Connection con = conexaoBancoDeDados.getConnection();
         try {
             StringBuilder sql = new StringBuilder();
             sql.append("UPDATE CARRO SET ");
@@ -200,7 +208,8 @@ public class CarroRepository {
         }
     }
 
-    public List<Carro> listarNaoAlugaDos() throws BancoDeDadosException {
+    public List<Carro> listarNaoAlugaDos() throws SQLException {
+        Connection con = conexaoBancoDeDados.getConnection();
         List<Carro> carros = new ArrayList<>();
         try {
             Statement stmt = con.createStatement();

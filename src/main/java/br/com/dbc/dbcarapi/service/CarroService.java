@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,13 +23,13 @@ public class CarroService {
     @Autowired
     private CarroRepository carroRepository;
 
-    public List<CarroDTO> list() throws BancoDeDadosException {
+    public List<CarroDTO> list() throws SQLException {
         return carroRepository.list().stream()
                 .map(carro -> objectMapper.convertValue(carro, CarroDTO.class))
                 .collect(Collectors.toList());
     }
 
-    public CarroDTO create(CarroCreateDTO carro) throws BancoDeDadosException {
+    public CarroDTO create(CarroCreateDTO carro) throws SQLException {
         log.info("Adicionando o novo carro...");
         Carro carroEntity = convertCarroEntity(carro);
         Carro carroCriado = carroRepository.create(carroEntity);
@@ -49,14 +50,14 @@ public class CarroService {
 
     }
 
-    public void delete(Integer idCarro)  throws BancoDeDadosException {
+    public void delete(Integer idCarro) throws SQLException {
         log.info("Deletando carro do catálogo...");
         Carro verifyCarro = carroRepository.findById(idCarro);
         carroRepository.delete(idCarro);
         log.info("O carro " + verifyCarro.getNomeCarro() + " foi removido do catálogo com sucesso!");
     }
 
-    public List<CarroDTO> listNaoAlugados() throws BancoDeDadosException {
+    public List<CarroDTO> listNaoAlugados() throws SQLException {
         return carroRepository.listarNaoAlugaDos().stream()
                 .map(carro -> objectMapper.convertValue(carro, CarroDTO.class))
                 .collect(Collectors.toList());
