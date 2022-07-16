@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ClienteDTO extends ClienteCreateDTO {
 
-    @Schema
+    @Schema(description = "Identificador (ID) do cliente")
     private Integer idCliente;
 }

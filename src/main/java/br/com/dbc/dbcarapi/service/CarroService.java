@@ -27,6 +27,7 @@ public class CarroService {
                 .map(carro -> objectMapper.convertValue(carro, CarroDTO.class))
                 .collect(Collectors.toList());
     }
+
     public CarroDTO create(CarroCreateDTO carro) throws BancoDeDadosException {
         log.info("Adicionando o novo carro...");
         Carro carroEntity = convertCarroEntity(carro);

@@ -9,7 +9,7 @@ import java.util.Objects;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Cliente extends Usuario{
+public class Cliente extends Usuario {
     private String cpf;
     private String telefone;
     private String endereco;
