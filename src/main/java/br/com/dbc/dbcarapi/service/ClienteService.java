@@ -25,14 +25,11 @@ public class ClienteService {
 
     public List<ClienteDTO> list() throws SQLException {
         return clienteRepository.list().stream()
-                .map(cliente -> {
-                    ClienteDTO clienteDTO = objectMapper.convertValue(cliente, ClienteDTO.class);
-                    return clienteDTO;
-                })
+                .map(cliente -> convertClienteDTO(cliente))
                 .collect(Collectors.toList());
     }
 
-    public ClienteDTO listByIdCliente(Integer idCliente) throws Exception {
+    public ClienteDTO findByIdCliente(Integer idCliente) throws Exception {
         Cliente clienteRecuperado = clienteRepository.findByIdCliente(idCliente);
         if(clienteRecuperado != null){
             return convertClienteDTO(clienteRecuperado);
@@ -48,18 +45,22 @@ public class ClienteService {
         Cliente clienteCriado = clienteRepository.create(clienteEntity);
 
         ClienteDTO clienteDTO = convertClienteDTO(clienteCriado);
+
         log.info("O cliente " + clienteDTO.getNome() + " foi adicionado com sucesso!");
         return clienteDTO;
     }
 
     public ClienteDTO update(Integer idCliente, ClienteCreateDTO clienteCreateDTO) throws Exception {
         log.info("Atualizando dados do cliente...");
-        listByIdCliente(idCliente);
+
+        findByIdCliente(idCliente);
+
         Cliente clienteEntity = convertClienteEntity(clienteCreateDTO);
         Cliente clienteAtualizar = clienteRepository.update(idCliente, clienteEntity);
         ClienteDTO clienteDTO = convertClienteDTO(clienteAtualizar);
         clienteDTO.setIdCliente(idCliente);
-        log.info("Dados do cliente atualizados.");
+
+        log.info("Dados do cliente " + clienteDTO.getNome() + " foram atualizados.");
         return clienteDTO;
 
     }

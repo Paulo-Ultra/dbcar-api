@@ -52,7 +52,7 @@ public class ClienteController {
     )
     @GetMapping("/{idCliente}")
     public ResponseEntity<ClienteDTO> listByIdCliente(Integer idCliente) throws Exception {
-        return new ResponseEntity<>(clienteService.listByIdCliente(idCliente), HttpStatus.OK);
+        return new ResponseEntity<>(clienteService.findByIdCliente(idCliente), HttpStatus.OK);
     }
 
     @Operation(summary = "Adicionar um novo cliente", description = "Adicionará um novo cliente a DBCar.")
