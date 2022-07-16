@@ -165,6 +165,63 @@ public class CarroRepository {
         return null;
     }
 
+    public boolean editarAlugado(Integer id, Boolean alugado) throws BancoDeDadosException {
+        try {
+            StringBuilder sql = new StringBuilder();
+            sql.append("UPDATE CARRO SET ");
+            sql.append(" Alugado = ? ");
+            sql.append(" WHERE id_carro = ? ");
+
+            PreparedStatement stmt = con.prepareStatement(sql.toString());
+
+            stmt.setString(1, alugado ? "S" : "N");
+            stmt.setInt(2, id);
+
+            int res = stmt.executeUpdate();
+//            System.out.println("editarCarro.res=" + res);
+
+            return res > 0;
+        } catch (SQLException e) {
+            throw new BancoDeDadosException(e.getCause());
+        } finally {
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public List<Carro> listarNaoAlugaDos() throws BancoDeDadosException {
+        List<Carro> carros = new ArrayList<>();
+        Connection con = null;
+        try {
+            Statement stmt = con.createStatement();
+
+            String sql = "SELECT * FROM CARRO\n" +
+                    "WHERE ALUGADO = 'N'";
+
+            ResultSet res = stmt.executeQuery(sql);
+
+            while (res.next()) {
+                Carro carro = compile(res);
+                carros.add(carro);
+            }
+        } catch (SQLException e) {
+            throw new BancoDeDadosException(e.getCause());
+        } finally {
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return carros;
+    }
     public static Carro compile(ResultSet result) {
         try {
             Carro carro = new Carro();
