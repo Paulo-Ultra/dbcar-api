@@ -39,23 +39,6 @@ public class Aluguel {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (o == this)
-            return true;
-        if (!(o instanceof Aluguel)) {
-            return false;
-        }
-        Aluguel aluguel = (Aluguel) o;
-        return Objects.equals(idAluguel, aluguel.idAluguel) && Objects.equals(carro, aluguel.carro) && Objects.equals(cliente, aluguel.cliente)
-                && Objects.equals(diaDoAluguel, aluguel.diaDoAluguel) && Objects.equals(diaDaEntrega, aluguel.diaDaEntrega);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(idAluguel, carro, cliente, diaDoAluguel, diaDaEntrega);
-    }
-
-    @Override
     public String toString() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         DecimalFormat df = new DecimalFormat("#,###.00");

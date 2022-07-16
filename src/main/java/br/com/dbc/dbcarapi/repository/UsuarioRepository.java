@@ -21,7 +21,7 @@ public class UsuarioRepository {
 
     public Integer getProximoId(Connection connection) throws SQLException {
         Connection con = conexaoBancoDeDados.getConnection();
-        String sql = "SELECT seq_carro.nextval mysequence from DUAL";
+        String sql = "SELECT seq_usuario.nextval mysequence from DUAL";
 
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(sql);
@@ -37,8 +37,7 @@ public class UsuarioRepository {
         List<Usuario> usuarios = new ArrayList<>();
         try {
             Statement stmt = con.createStatement();
-
-            String sql = "SELECT * FROM CARRO";
+            String sql = "SELECT * FROM USUARIO";
 
             ResultSet res = stmt.executeQuery(sql);
 
@@ -60,40 +59,110 @@ public class UsuarioRepository {
         return usuarios;
     }
 
-//    public Usuario create(Usuario usuario) throws BancoDeDadosException {
-//        try {
-//            Integer proximoId = this.getProximoId(con);
-//            usuario.setIdUsuario(proximoId);
-//
-//            String sql = "INSERT INTO CARRO\n" +
-//                    "(ID_USUARIO, ALUGADO, NOME, MARCA, CLASSE, QUANTIDADE_PASSAGEIROS, KM_RODADOS, PRECO_DIARIA)\n" +
-//                    "VALUES(?, ?, ?, ?, ?, ?, ?, ?)\n";
-//
-//            PreparedStatement stmt = con.prepareStatement(sql);
-//
-//            stmt.setInt(1, carro.getIdCarro());
-//            stmt.setString(2, carro.getAlugado().getStatus());
-//            stmt.setString(3, carro.getNomeCarro());
-//            stmt.setString(4, carro.getMarca());
-//            stmt.setString(5, carro.getClasse().getTipo());
-//            stmt.setInt(6, carro.getQntPassageiros());
-//            stmt.setInt(7, carro.getKmRodados());
-//            stmt.setDouble(8, carro.getPrecoDiaria());
-//
-//            int res = stmt.executeUpdate();
-//            return carro;
-//        } catch (SQLException e) {
-//            throw new BancoDeDadosException(e.getCause());
-//        } finally {
-//            try {
-//                if (con != null) {
-//                    con.close();
-//                }
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
+    public Usuario create(Usuario usuario) throws SQLException {
+        Connection con = conexaoBancoDeDados.getConnection();
+        try {
+            Integer proximoId = this.getProximoId(con);
+            usuario.setIdUsuario(proximoId);
+
+            String sql = "INSERT INTO USUARIO\n" +
+                    "(ID_USUARIO, NOME)\n" +
+                    "VALUES(?, ?)\n";
+
+            PreparedStatement stmt = con.prepareStatement(sql);
+
+            stmt.setInt(1, usuario.getIdUsuario());
+            stmt.setString(2, usuario.getNome());
+
+            int res = stmt.executeUpdate();
+            return usuario;
+        } catch (SQLException e) {
+            throw new BancoDeDadosException(e.getCause());
+        } finally {
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public Usuario update(Integer idUsuario, Usuario usuario) throws SQLException {
+        Connection con = conexaoBancoDeDados.getConnection();
+        try {
+            StringBuilder sql = new StringBuilder();
+            sql.append("UPDATE USUARIO SET ");
+            sql.append(" nome = ?, ");
+            sql.append(" WHERE ID_USUARIO = ? ");
+
+            PreparedStatement stmt = con.prepareStatement(sql.toString());
+
+            stmt.setString(1, usuario.getNome());
+            stmt.setInt(2, idUsuario);
+
+            int res = stmt.executeUpdate();
+            return usuario;
+        } catch (SQLException e) {
+            throw new BancoDeDadosException(e.getCause());
+        } finally {
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void delete(Integer idUsuario) throws SQLException {
+        Connection con = conexaoBancoDeDados.getConnection();
+        try {
+            String sql = "DELETE FROM USUARIO WHERE id_usuario = ?";
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setInt(1, idUsuario);
+
+            int res = stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new BancoDeDadosException(e.getCause());
+        } finally {
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public Usuario findById(Integer idUsuario) throws SQLException {
+        Connection con = conexaoBancoDeDados.getConnection();
+        try {
+            String sql = "SELECT * FROM USUARIO WHERE id_usuario = ?";
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setInt(1, idUsuario);
+            ResultSet result = stmt.executeQuery();
+
+            if (result.next()) {
+                return compile(result);
+            }
+        } catch (SQLException e) {
+            throw new BancoDeDadosException(e.getCause());
+        } finally {
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
     public static Usuario compile(ResultSet result) {
         try {
             Usuario user = new Usuario();
