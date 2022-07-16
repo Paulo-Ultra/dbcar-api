@@ -100,7 +100,7 @@ public class CarroRepository {
             sql.append(" classe = ?, ");
             sql.append(" quantidade_passageiros = ?, ");
             sql.append(" km_rodados = ?, ");
-            sql.append(" preco_diaria = ?, ");
+            sql.append(" preco_diaria = ? ");
             sql.append(" WHERE id_carro = ? ");
 
             PreparedStatement stmt = con.prepareStatement(sql.toString());
@@ -149,10 +149,9 @@ public class CarroRepository {
         }
     }
 
-    // TODO - VERIFICAR O MÉTODO FINDBYID (RETORNANDO CARRO?)
     public Carro findById(Integer idCarro) {
         try {
-            PreparedStatement stmt = con.prepareStatement("SELECT * FROM CARRO WHERE id = " + idCarro);
+            PreparedStatement stmt = con.prepareStatement("SELECT * FROM CARRO WHERE id_carro = " + idCarro);
             ResultSet result = stmt.executeQuery();
 
             if (result.next()) {

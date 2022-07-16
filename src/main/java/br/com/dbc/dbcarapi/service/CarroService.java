@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -21,28 +22,27 @@ public class CarroService {
     @Autowired
     private CarroRepository carroRepository;
 
-    public List<Carro> list() throws BancoDeDadosException {
-        return carroRepository.list();
+    public List<CarroDTO> list() throws BancoDeDadosException {
+        return carroRepository.list().stream()
+                .map(carro -> objectMapper.convertValue(carro, CarroDTO.class))
+                .collect(Collectors.toList());
     }
     public CarroDTO create(CarroCreateDTO carro) throws BancoDeDadosException {
         log.info("Adicionando o novo carro...");
         Carro carroEntity = convertCarroEntity(carro);
         Carro carroCriado = carroRepository.create(carroEntity);
         CarroDTO carroDTO = convertCarroDTO(carroCriado);
-        log.info("O novo carro" + carroDTO.getNome() + " foi adicionado com sucesso.");
+        log.info("O novo carro" + carroDTO.getNomeCarro() + " foi adicionado com sucesso.");
         return carroDTO;
     }
 
-    public CarroDTO update(Integer idCarro, CarroCreateDTO carroCreateDTO) throws BancoDeDadosException {
+    public CarroDTO update(Integer idCarro, CarroCreateDTO carroCreateDTO) throws Exception {
         log.info("Atualizando dados do carro...");
-        // verificando se o carro está no repository;
-        Carro verifyCarro = carroRepository.findById(idCarro);
-        // convertendo carro para carroEntity;
+        carroRepository.findById(idCarro);
         Carro carroEntity = convertCarroEntity(carroCreateDTO);
-        // atualizar dados do carro;
-        // TODO - VERIFICAR NO MÉTODO findById (retornando objeto);
-        Carro carroAtualizar = carroRepository.update(verifyCarro.getIdCarro(), carroEntity);
+        Carro carroAtualizar = carroRepository.update(idCarro, carroEntity);
         CarroDTO carroDTO = convertCarroDTO(carroAtualizar);
+        carroDTO.setIdCarro(idCarro);
         log.info("Dados do carro atualizados " + carroAtualizar);
         return carroDTO;
     }
@@ -50,9 +50,15 @@ public class CarroService {
     public void delete(Integer idCarro)  throws BancoDeDadosException {
         log.info("Deletando carro do catálogo...");
         Carro verifyCarro = carroRepository.findById(idCarro);
-        carroRepository.list().remove(verifyCarro);
+        carroRepository.delete(idCarro);
         log.info("O carro " + verifyCarro.getNomeCarro() + " foi removido do catálogo com sucesso!");
-        CarroDTO carroDTO = convertCarroDTO(verifyCarro);
+    }
+
+    public Carro findByIdCarro(Integer idCarro) throws Exception {
+        return carroRepository.list().stream()
+                .filter(carro -> carro.getIdCarro().equals(idCarro))
+                .findFirst()
+                .orElseThrow(() -> new Exception ("Carro não encontrado"));
     }
 
     private Carro convertCarroEntity(CarroCreateDTO carro) {
@@ -61,12 +67,5 @@ public class CarroService {
 
     private CarroDTO convertCarroDTO(Carro carroEntity) {
         return objectMapper.convertValue(carroEntity, CarroDTO.class);
-    }
-
-    public Carro findByIdCarro(Integer idCarro) throws Exception {
-        return carroRepository.list().stream()
-                .filter(carro -> carro.getIdCarro().equals(idCarro))
-                .findFirst()
-                .orElseThrow(() -> new Exception ("Carro não encontrado"));
     }
 }

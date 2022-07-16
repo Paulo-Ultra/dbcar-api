@@ -33,15 +33,4 @@ public class ConexaoBancoDeDados {
         con.createStatement().execute("alter session set current_schema=" + schema);
         return con;
     }
-
-//    public static boolean closeConnection() {
-//        try {
-//
-//            ConexaoBancoDeDados.getConnection().close();
-//            return true;
-//
-//        } catch (SQLException e) {
-//            return false;
-//        }
-//    }
 }

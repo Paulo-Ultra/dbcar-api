@@ -21,7 +21,7 @@ public class CarroCreateDTO {
 
     @Schema(description = "Nome do carro")
     @NotBlank(message = "O nome do veículo não pode ser nulo/vazio.")
-    private String nome;
+    private String nomeCarro;
 
     @Schema(description = "Marca do carro")
     @NotBlank(message = "A marca do veículo não pode ser nula/vazia.")
@@ -33,7 +33,7 @@ public class CarroCreateDTO {
 
     @Schema(description = "Quantidade de passageiros que o veículo suporta")
     @NotNull(message = "A quantidade de passageiros não pode ser nula.")
-    private Integer quantidade_passageiros;
+    private Integer qntPassageiros;
 
     @Schema(description = "Kilômetros rodados pelo veículo")
     @NotNull(message = "A quantidade de km rodados pelo veículo não pode ser nula.")
