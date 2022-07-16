@@ -44,7 +44,7 @@ public class ClienteService {
         return clienteRepository.list().stream()
                 .filter(cliente -> cliente.getIdUsuario().equals(idCliente))
                 .findFirst()
-                .orElseThrow(() -> new Exception ("Carro não encontrado"));
+                .orElseThrow(() -> new Exception ("Cliente não encontrado"));
     }
 
     private Cliente convertClienteEntity(ClienteCreateDTO cliente) {
