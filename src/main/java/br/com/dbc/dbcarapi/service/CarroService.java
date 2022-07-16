@@ -39,13 +39,14 @@ public class CarroService {
 
     public CarroDTO update(Integer idCarro, CarroCreateDTO carroCreateDTO) throws Exception {
         log.info("Atualizando dados do carro...");
-        carroRepository.findById(idCarro);
-        Carro carroEntity = convertCarroEntity(carroCreateDTO);
-        Carro carroAtualizar = carroRepository.update(idCarro, carroEntity);
-        CarroDTO carroDTO = convertCarroDTO(carroAtualizar);
-        carroDTO.setIdCarro(idCarro);
-        log.info("Dados do carro atualizados " + carroAtualizar);
-        return carroDTO;
+            findByIdCarro(idCarro);
+            Carro carroEntity = convertCarroEntity(carroCreateDTO);
+            Carro carroAtualizar = carroRepository.update(idCarro, carroEntity);
+            CarroDTO carroDTO = convertCarroDTO(carroAtualizar);
+            carroDTO.setIdCarro(idCarro);
+            log.info("Dados do carro atualizados " + carroAtualizar);
+            return carroDTO;
+
     }
 
     public void delete(Integer idCarro)  throws BancoDeDadosException {
@@ -55,11 +56,13 @@ public class CarroService {
         log.info("O carro " + verifyCarro.getNomeCarro() + " foi removido do catálogo com sucesso!");
     }
 
-    public Carro findByIdCarro(Integer idCarro) throws Exception {
-        return carroRepository.list().stream()
-                .filter(carro -> carro.getIdCarro().equals(idCarro))
-                .findFirst()
-                .orElseThrow(() -> new Exception ("Carro não encontrado"));
+    public CarroDTO findByIdCarro(Integer idCarro) throws Exception {
+        Carro carroRecuperado = carroRepository.findById(idCarro);
+        if(carroRecuperado != null) {
+            return convertCarroDTO(carroRecuperado);
+        } else {
+            throw new Exception("Carro não encontrado");
+        }
     }
 
     private Carro convertCarroEntity(CarroCreateDTO carro) {

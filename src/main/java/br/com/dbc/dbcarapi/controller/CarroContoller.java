@@ -46,8 +46,8 @@ public class CarroContoller {
                     @ApiResponse(responseCode = "500", description = "Erro! Durante a execução, foi gerada uma exceção")
             }
     )
-    @GetMapping("/idCarro")
-    public ResponseEntity<Carro> findById (Integer idCarro) throws Exception {
+    @GetMapping("/{idCarro}")
+    public ResponseEntity<CarroDTO> findById (@PathVariable Integer idCarro) throws Exception {
         return new ResponseEntity<>(carroService.findByIdCarro(idCarro), HttpStatus.OK);
     }
 
