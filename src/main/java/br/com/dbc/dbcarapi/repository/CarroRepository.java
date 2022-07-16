@@ -151,7 +151,9 @@ public class CarroRepository {
 
     public Carro findById(Integer idCarro) {
         try {
-            PreparedStatement stmt = con.prepareStatement("SELECT * FROM CARRO WHERE id_carro = " + idCarro);
+            String sql = "SELECT * FROM CARRO WHERE id_carro = ?";
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setInt(1, idCarro);
             ResultSet result = stmt.executeQuery();
 
             if (result.next()) {
