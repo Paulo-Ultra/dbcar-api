@@ -10,6 +10,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Cliente extends Usuario {
+    private Integer idCliente;
     private String cpf;
     private String telefone;
     private String endereco;

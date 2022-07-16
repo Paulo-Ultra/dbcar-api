@@ -30,13 +30,12 @@ public class ClienteRepository {
         return null;
     }
 
-    // TODO (status: 200): Porém, IdCliente está sendo null, verificar depois;
     public List<Cliente> list() throws BancoDeDadosException {
         List<Cliente> clientes = new ArrayList<>();
         try {
 
             StringBuilder sql = new StringBuilder("SELECT * FROM CLIENTE C");
-            sql.append(" INNER JOIN USUARIO U ON C.ID_CLIENTE = U.ID_USUARIO");
+            sql.append(" INNER JOIN USUARIO U ON C.ID_USUARIO = U.ID_USUARIO");
 
             PreparedStatement stmt = con.prepareStatement(sql.toString());
             ResultSet result = stmt.executeQuery();
@@ -148,7 +147,7 @@ public class ClienteRepository {
     public Cliente findByIdCliente(Integer idCliente) {
         try {
             StringBuilder sql = new StringBuilder("SELECT * FROM CLIENTE C");
-            sql.append(" INNER JOIN USUARIO U ON C.ID_CLIENTE = U.ID_USUARIO WHERE id_cliente = ?");
+            sql.append(" INNER JOIN USUARIO U ON C.ID_USUARIO = U.ID_USUARIO WHERE id_cliente = ?");
 
             PreparedStatement stmt = con.prepareStatement(sql.toString());
             stmt.setInt(1, idCliente);
@@ -167,8 +166,8 @@ public class ClienteRepository {
     public static Cliente compile(ResultSet result) {
         try {
             Cliente cliente = new Cliente();
-
             cliente.setIdUsuario(result.getInt("id_usuario"));
+            cliente.setIdCliente(result.getInt("id_cliente"));
             cliente.setNome(result.getString("nome"));
             cliente.setCpf(result.getString("cpf"));
             cliente.setTelefone(result.getString("telefone"));

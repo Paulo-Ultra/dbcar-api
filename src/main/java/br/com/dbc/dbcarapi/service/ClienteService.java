@@ -24,7 +24,12 @@ public class ClienteService {
 
     public List<ClienteDTO> list() throws BancoDeDadosException {
         return clienteRepository.list().stream()
-                .map(cliente -> objectMapper.convertValue(cliente, ClienteDTO.class))
+
+                .map(cliente -> {
+                            ClienteDTO clienteDTO = objectMapper.convertValue(cliente, ClienteDTO.class);
+                            return clienteDTO;
+                        }
+                )
                 .collect(Collectors.toList());
     }
 
@@ -63,8 +68,7 @@ public class ClienteService {
             log.info("Dados do cliente atualizados.");
 
             return convertClienteDTO(clienteEntity);
-        }
-        else {
+        } else {
             throw new Exception("Carro não atualizado");
         }
     }
