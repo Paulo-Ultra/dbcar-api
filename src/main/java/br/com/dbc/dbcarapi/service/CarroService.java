@@ -72,11 +72,11 @@ public class CarroService {
         }
     }
 
-    private Carro convertCarroEntity(CarroCreateDTO carro) {
+    public Carro convertCarroEntity(CarroCreateDTO carro) {
         return objectMapper.convertValue(carro, Carro.class);
     }
 
-    private CarroDTO convertCarroDTO(Carro carroEntity) {
+    public CarroDTO convertCarroDTO(Carro carroEntity) {
         return objectMapper.convertValue(carroEntity, CarroDTO.class);
     }
 }

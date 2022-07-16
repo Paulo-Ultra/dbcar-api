@@ -2,8 +2,6 @@ package br.com.dbc.dbcarapi.controller;
 
 import br.com.dbc.dbcarapi.dto.CarroCreateDTO;
 import br.com.dbc.dbcarapi.dto.CarroDTO;
-import br.com.dbc.dbcarapi.entity.Carro;
-import br.com.dbc.dbcarapi.exception.BancoDeDadosException;
 import br.com.dbc.dbcarapi.service.CarroService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,12 +19,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/carro")
 @Validated
-public class CarroContoller {
+public class CarroController {
 
     @Autowired
     private CarroService carroService;
 
-    @Operation(summary = "Listar os carros do catalogo", description = "Realizará a listagem de todos os carros disponiveis no catalogo")
+    @Operation(summary = "Listar os carros do catálogo", description = "Realizará a listagem de todos os carros disponiveis no catálogo")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Sucesso! A listagem dos carros disponíveis foi realizada com sucesso"),
@@ -39,7 +37,7 @@ public class CarroContoller {
         return new ResponseEntity<>(carroService.list(), HttpStatus.OK);
     }
 
-    @Operation(summary = "Listar os carros do catalogo não alugados", description = "Realizará a listagem de todos os carros disponiveis para aluguel no catalogo")
+    @Operation(summary = "Listar os carros do catálogo não alugados", description = "Realizará a listagem de todos os carros disponiveis para aluguel no catálogo")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Sucesso! A listagem dos carros disponíveis foi realizada com sucesso"),
@@ -51,7 +49,7 @@ public class CarroContoller {
     public ResponseEntity<List<CarroDTO>> listNaoAlugados() throws SQLException {
         return new ResponseEntity<>(carroService.listNaoAlugados(), HttpStatus.OK);
     }
-    @Operation(summary = "Listar os carros do catalogo pela identificação", description = "Realizará a listagem dos carros disponiveis no catalogo pelo número da identificação")
+    @Operation(summary = "Listar os carros do catálogo pela identificação", description = "Realizará a listagem dos carros disponíveis no catálogo pelo número da identificação")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Sucesso! A listagem dos carros disponíveis foi realizada com sucesso"),
