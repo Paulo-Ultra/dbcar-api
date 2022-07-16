@@ -40,6 +40,30 @@ public class ClienteService {
         return clienteDTO;
     }
 
+    public ClienteDTO update(Integer idCliente, ClienteCreateDTO clienteCreateDTO) throws BancoDeDadosException {
+        log.info("Atualizando dados do cliente...");
+
+        Cliente clienteRecuperado = clienteRepository.findById(idCliente);
+        if (clienteRecuperado != null) {
+
+            Cliente clienteEntity = convertClienteEntity(clienteCreateDTO);
+            clienteEntity.setIdUsuario(clienteRecuperado.getIdUsuario());
+            clienteEntity.setCpf(clienteRecuperado.getCpf());
+            clienteEntity.setTelefone(clienteRecuperado.getTelefone());
+            clienteEntity.setEndereco(clienteRecuperado.getEndereco());
+            clienteEntity.setEmail(clienteRecuperado.getEmail());
+
+            clienteRepository.update(idCliente, clienteEntity);
+
+            log.info("Dados do cliente atualizados.");
+
+            return convertClienteDTO(clienteEntity);
+        }
+        else {
+            throw new BancoDeDadosException("Cliente não encontrado.");
+        }
+    }
+
     public Cliente findByIdCliente(Integer idCliente) throws Exception {
         return clienteRepository.list().stream()
                 .filter(cliente -> cliente.getIdUsuario().equals(idCliente))

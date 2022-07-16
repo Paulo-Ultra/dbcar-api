@@ -92,12 +92,67 @@ public class ClienteRepository {
         }
     }
 
+    public Cliente update(Integer idCliente, Cliente cliente) throws BancoDeDadosException {
+        try {
+            StringBuilder sql = new StringBuilder();
+            sql.append("UPDATE CLIENTE SET ");
+            sql.append(" cpf = ?, ");
+            sql.append(" telefone = ?, ");
+            sql.append(" endereco = ?, ");
+            sql.append(" email = ? ");
+            sql.append(" WHERE id_cliente = ? ");
+
+            PreparedStatement stmt = con.prepareStatement(sql.toString());
+
+            stmt.setString(1, cliente.getCpf());
+            stmt.setString(2, cliente.getTelefone());
+            stmt.setString(3, cliente.getEndereco());
+            stmt.setString(4, cliente.getEmail());
+            stmt.setInt(5, idCliente);
+
+            int res = stmt.executeUpdate();
+            return cliente;
+        } catch (SQLException e) {
+            throw new BancoDeDadosException(e.getCause());
+        } finally {
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void delete(Integer idCliente) throws BancoDeDadosException {
+        try {
+            String sql = "DELETE FROM CLIENTE WHERE id_cliente = ?";
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setInt(1, idCliente);
+
+            int res = stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new BancoDeDadosException(e.getCause());
+        } finally {
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public Cliente findById(Integer idCliente) {
         try {
             StringBuilder sql = new StringBuilder("SELECT * FROM CLIENTE C");
             sql.append(" INNER JOIN USUARIO U ON C.ID_CLIENTE = U.ID_USUARIO WHERE id = ?");
+
             PreparedStatement stmt = con.prepareStatement(sql.toString());
             stmt.setInt(1, idCliente);
+
             ResultSet result = stmt.executeQuery();
 
             if (result.next()) {
