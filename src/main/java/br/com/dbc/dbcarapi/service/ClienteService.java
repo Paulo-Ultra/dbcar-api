@@ -25,12 +25,10 @@ public class ClienteService {
 
     public List<ClienteDTO> list() throws SQLException {
         return clienteRepository.list().stream()
-
                 .map(cliente -> {
-                            ClienteDTO clienteDTO = objectMapper.convertValue(cliente, ClienteDTO.class);
-                            return clienteDTO;
-                        }
-                )
+                    ClienteDTO clienteDTO = objectMapper.convertValue(cliente, ClienteDTO.class);
+                    return clienteDTO;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -70,14 +68,17 @@ public class ClienteService {
 
             return convertClienteDTO(clienteEntity);
         } else {
-            throw new Exception("Carro não atualizado");
+            throw new Exception("Cliente não atualizado");
         }
     }
 
     public void delete(Integer idCliente) throws SQLException {
         log.info("Removendo cliente...");
+
         Cliente verifyCliente = clienteRepository.findByIdCliente(idCliente);
+
         clienteRepository.delete(idCliente);
+
         log.info("O cliente " + verifyCliente.getNome() + " foi removido com sucesso!");
     }
 

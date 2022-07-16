@@ -19,9 +19,22 @@ public class ClienteRepository {
     @Autowired
     private ConexaoBancoDeDados conexaoBancoDeDados;
 
-    public Integer getProximoId(Connection connection) throws SQLException {
+    public Integer getProximoIdCliente(Connection connection) throws SQLException {
         Connection con = conexaoBancoDeDados.getConnection();
         String sql = "SELECT seq_cliente.nextval mysequence from DUAL";
+
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(sql);
+
+        if (res.next()) {
+            return res.getInt("mysequence");
+        }
+        return null;
+    }
+
+    public Integer getProximoIdUsuario(Connection connection) throws SQLException {
+        Connection con = conexaoBancoDeDados.getConnection();
+        String sql = "SELECT seq_usuario.nextval mysequence from DUAL";
 
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(sql);
@@ -63,17 +76,17 @@ public class ClienteRepository {
     public Cliente create(Cliente cliente) throws SQLException {
         Connection con = conexaoBancoDeDados.getConnection();
         try {
-            Integer proximoId = this.getProximoId(con);
-            cliente.setIdUsuario(proximoId);
+            cliente.setIdCliente(getProximoIdCliente(con));
+            cliente.setIdUsuario(getProximoIdUsuario(con));
 
             String sql = "INSERT INTO CLIENTE\n" +
-                    "(ID_USUARIO, NOME, CPF, TELEFONE, ENDERECO, EMAIL)\n" +
+                    "(ID_CLIENTE, ID_USUARIO, CPF, TELEFONE, ENDERECO, EMAIL)\n" +
                     "VALUES(?, ?, ?, ?, ?, ?)\n";
 
             PreparedStatement stmt = con.prepareStatement(sql);
 
-            stmt.setInt(1, cliente.getIdUsuario());
-            stmt.setString(2, cliente.getNome());
+            stmt.setInt(1, cliente.getIdCliente());
+            stmt.setInt(2, cliente.getIdUsuario());
             stmt.setString(3, cliente.getCpf());
             stmt.setString(4, cliente.getTelefone());
             stmt.setString(5, cliente.getEndereco());
