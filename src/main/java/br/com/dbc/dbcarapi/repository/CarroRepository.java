@@ -149,7 +149,7 @@ public class CarroRepository {
         }
     }
 
-    public Carro findById(Integer idCarro) {
+    public Carro findById(Integer idCarro) throws BancoDeDadosException {
         try {
             String sql = "SELECT * FROM CARRO WHERE id_carro = ?";
             PreparedStatement stmt = con.prepareStatement(sql);
@@ -160,7 +160,15 @@ public class CarroRepository {
                 return compile(result);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BancoDeDadosException(e.getCause());
+        } finally {
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
@@ -178,8 +186,6 @@ public class CarroRepository {
             stmt.setInt(2, id);
 
             int res = stmt.executeUpdate();
-//            System.out.println("editarCarro.res=" + res);
-
             return res > 0;
         } catch (SQLException e) {
             throw new BancoDeDadosException(e.getCause());
@@ -196,12 +202,11 @@ public class CarroRepository {
 
     public List<Carro> listarNaoAlugaDos() throws BancoDeDadosException {
         List<Carro> carros = new ArrayList<>();
-        Connection con = null;
         try {
             Statement stmt = con.createStatement();
 
             String sql = "SELECT * FROM CARRO\n" +
-                    "WHERE ALUGADO = 'N'";
+                    "WHERE ALUGADO = 'S'";
 
             ResultSet res = stmt.executeQuery(sql);
 

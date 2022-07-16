@@ -56,6 +56,12 @@ public class CarroService {
         log.info("O carro " + verifyCarro.getNomeCarro() + " foi removido do catálogo com sucesso!");
     }
 
+    public List<CarroDTO> listNaoAlugados() throws BancoDeDadosException {
+        return carroRepository.listarNaoAlugaDos().stream()
+                .map(carro -> objectMapper.convertValue(carro, CarroDTO.class))
+                .collect(Collectors.toList());
+    }
+
     public CarroDTO findByIdCarro(Integer idCarro) throws Exception {
         Carro carroRecuperado = carroRepository.findById(idCarro);
         if(carroRecuperado != null) {
