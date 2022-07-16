@@ -1,10 +1,7 @@
 package br.com.dbc.dbcarapi.service;
 
-import br.com.dbc.dbcarapi.dto.CarroCreateDTO;
-import br.com.dbc.dbcarapi.dto.CarroDTO;
 import br.com.dbc.dbcarapi.dto.ClienteCreateDTO;
 import br.com.dbc.dbcarapi.dto.ClienteDTO;
-import br.com.dbc.dbcarapi.entity.Carro;
 import br.com.dbc.dbcarapi.entity.Cliente;
 import br.com.dbc.dbcarapi.exception.BancoDeDadosException;
 import br.com.dbc.dbcarapi.repository.ClienteRepository;
@@ -31,19 +28,27 @@ public class ClienteService {
                 .collect(Collectors.toList());
     }
 
+    public ClienteDTO listByIdCliente(Integer idCliente) throws Exception {
+        return (ClienteDTO) clienteRepository.list().stream()
+                .map(this::convertClienteDTO)
+                .collect(Collectors.toList());
+    }
+
     public ClienteDTO create(ClienteCreateDTO cliente) throws BancoDeDadosException {
         log.info("Adicionando um novo cliente ao banco de dados...");
+
         Cliente clienteEntity = convertClienteEntity(cliente);
         Cliente clienteCriado = clienteRepository.create(clienteEntity);
+
         ClienteDTO clienteDTO = convertClienteDTO(clienteCriado);
         log.info("O cliente " + clienteDTO.getNome() + " foi adicionado com sucesso!");
         return clienteDTO;
     }
 
-    public ClienteDTO update(Integer idCliente, ClienteCreateDTO clienteCreateDTO) throws BancoDeDadosException {
+    public ClienteDTO update(Integer idCliente, ClienteCreateDTO clienteCreateDTO) throws Exception {
         log.info("Atualizando dados do cliente...");
 
-        Cliente clienteRecuperado = clienteRepository.findById(idCliente);
+        Cliente clienteRecuperado = clienteRepository.findByIdCliente(idCliente);
         if (clienteRecuperado != null) {
 
             Cliente clienteEntity = convertClienteEntity(clienteCreateDTO);
@@ -60,15 +65,15 @@ public class ClienteService {
             return convertClienteDTO(clienteEntity);
         }
         else {
-            throw new BancoDeDadosException("Cliente não encontrado.");
+            throw new Exception("Carro não atualizado");
         }
     }
 
-    public Cliente findByIdCliente(Integer idCliente) throws Exception {
-        return clienteRepository.list().stream()
-                .filter(cliente -> cliente.getIdUsuario().equals(idCliente))
-                .findFirst()
-                .orElseThrow(() -> new Exception ("Cliente não encontrado"));
+    public void delete(Integer idCliente) throws BancoDeDadosException {
+        log.info("Removendo cliente...");
+        Cliente verifyCliente = clienteRepository.findByIdCliente(idCliente);
+        clienteRepository.delete(idCliente);
+        log.info("O cliente " + verifyCliente.getNome() + " foi removido com sucesso!");
     }
 
     private Cliente convertClienteEntity(ClienteCreateDTO cliente) {

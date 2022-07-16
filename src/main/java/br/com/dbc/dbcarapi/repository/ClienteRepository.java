@@ -145,10 +145,10 @@ public class ClienteRepository {
         }
     }
 
-    public Cliente findById(Integer idCliente) {
+    public Cliente findByIdCliente(Integer idCliente) {
         try {
             StringBuilder sql = new StringBuilder("SELECT * FROM CLIENTE C");
-            sql.append(" INNER JOIN USUARIO U ON C.ID_CLIENTE = U.ID_USUARIO WHERE id = ?");
+            sql.append(" INNER JOIN USUARIO U ON C.ID_CLIENTE = U.ID_USUARIO WHERE id_cliente = ?");
 
             PreparedStatement stmt = con.prepareStatement(sql.toString());
             stmt.setInt(1, idCliente);

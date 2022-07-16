@@ -13,9 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -49,7 +47,21 @@ public class ClienteController {
             }
     )
     @GetMapping("/idCliente")
-    public ResponseEntity<Cliente> findById (Integer idCliente) throws Exception {
-        return new ResponseEntity<>(clienteService.findByIdCliente(idCliente), HttpStatus.OK);
+    public ResponseEntity<ClienteDTO> findById (Integer idCliente) throws Exception {
+        return new ResponseEntity<>(clienteService.listByIdCliente(idCliente), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Deletar cliente", description = "Removerá o cliente associado ao id.")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Sucesso! O cliente foi removido com sucesso"),
+                    @ApiResponse(responseCode = "403", description = "Permissão negada! Você não possui permissão para utilizar este recurso"),
+                    @ApiResponse(responseCode = "500", description = "Erro! Durante a execução, foi gerada uma exceção")
+            }
+    )
+    @DeleteMapping("/{idCliente}")
+    public ResponseEntity<Void> delete(@PathVariable("idCliente") Integer idCliente) throws BancoDeDadosException {
+        clienteService.delete(idCliente);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
