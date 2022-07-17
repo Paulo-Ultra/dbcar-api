@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,6 +70,21 @@ public class AluguelService {
             throw new Exception("Carro não encontrado");
         }
     }
+
+    public Double calculatarValor(Carro carro, Aluguel aluguel) {
+        switch (carro.getClasse().getTipo()) {
+            case "A":
+                return aluguel.diasComCarro() * carro.getPrecoDiaria() * 1.5;
+            case "B":
+                return aluguel.diasComCarro() * carro.getPrecoDiaria() * 1.2;
+            case "C":
+                return aluguel.diasComCarro() * carro.getPrecoDiaria();
+            default:
+                System.out.println("O carro informado não está disponível.");
+                return null;
+        }
+    }
+
     public Aluguel convertAluguelEntity(AluguelCreateDTO aluguel) {
         return objectMapper.convertValue(aluguel, Aluguel.class);
     }

@@ -21,4 +21,9 @@ public class Aluguel {
     private Integer idCarro;
     private LocalDate diaDoAluguel;
     private LocalDate diaDaEntrega;
+
+    public Long diasComCarro () {
+        return diaDoAluguel.until(diaDaEntrega, ChronoUnit.DAYS);
+    }
+
 }

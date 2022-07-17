@@ -2,6 +2,7 @@ package br.com.dbc.dbcarapi.service;
 
 import br.com.dbc.dbcarapi.dto.ClienteCreateDTO;
 import br.com.dbc.dbcarapi.dto.ClienteDTO;
+import br.com.dbc.dbcarapi.entity.Aluguel;
 import br.com.dbc.dbcarapi.entity.Cliente;
 import br.com.dbc.dbcarapi.repository.ClienteRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
