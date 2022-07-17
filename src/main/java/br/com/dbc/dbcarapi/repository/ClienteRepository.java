@@ -29,27 +29,12 @@ public class ClienteRepository {
         return null;
     }
 
-//    //todo -> Depois me explica pq busca o idUsuario aqui tbm
-//    public Integer getProximoIdUsuario(Connection connection) throws SQLException {
-//        Connection con = conexaoBancoDeDados.getConnection();
-//        String sql = "SELECT seq_usuario.nextval mysequence from DUAL";
-//
-//        Statement stmt = connection.createStatement();
-//        ResultSet res = stmt.executeQuery(sql);
-//
-//        if (res.next()) {
-//            return res.getInt("mysequence");
-//        }
-//        return null;
-//    }
-
     public List<Cliente> list() throws SQLException {
         Connection con = conexaoBancoDeDados.getConnection();
         List<Cliente> clientes = new ArrayList<>();
         try {
 
-            StringBuilder sql = new StringBuilder("SELECT * FROM CLIENTE C");
-            sql.append(" INNER JOIN USUARIO U ON C.ID_USUARIO = U.ID_USUARIO");
+            StringBuilder sql = new StringBuilder("SELECT * FROM CLIENTE");
 
             PreparedStatement stmt = con.prepareStatement(sql.toString());
             ResultSet result = stmt.executeQuery();
@@ -76,13 +61,13 @@ public class ClienteRepository {
         try {
             cliente.setIdCliente(getProximoIdCliente(con));
             String sql = "INSERT INTO CLIENTE\n" +
-                    "(ID_CLIENTE, ID_USUARIO, CPF, TELEFONE, ENDERECO, EMAIL)\n" +
+                    "(ID_CLIENTE, NOME, CPF, TELEFONE, ENDERECO, EMAIL)\n" +
                     "VALUES(?, ?, ?, ?, ?, ?)\n";
 
             PreparedStatement stmt = con.prepareStatement(sql);
 
             stmt.setInt(1, cliente.getIdCliente());
-            stmt.setInt(2, cliente.getIdUsuario());
+            stmt.setString(2, cliente.getNome());
             stmt.setString(3, cliente.getCpf());
             stmt.setString(4, cliente.getTelefone());
             stmt.setString(5, cliente.getEndereco());
@@ -109,6 +94,7 @@ public class ClienteRepository {
         try {
             StringBuilder sql = new StringBuilder();
             sql.append("UPDATE CLIENTE SET ");
+            sql.append(" nome = ?, ");
             sql.append(" cpf = ?, ");
             sql.append(" telefone = ?, ");
             sql.append(" endereco = ?, ");
@@ -117,11 +103,12 @@ public class ClienteRepository {
 
             PreparedStatement stmt = con.prepareStatement(sql.toString());
 
-            stmt.setString(1, cliente.getCpf());
-            stmt.setString(2, cliente.getTelefone());
-            stmt.setString(3, cliente.getEndereco());
-            stmt.setString(4, cliente.getEmail());
-            stmt.setInt(5, idCliente);
+            stmt.setString(1, cliente.getNome());
+            stmt.setString(2, cliente.getCpf());
+            stmt.setString(3, cliente.getTelefone());
+            stmt.setString(4, cliente.getEndereco());
+            stmt.setString(5, cliente.getEmail());
+            stmt.setInt(6, idCliente);
 
             int res = stmt.executeUpdate();
             return cliente;
@@ -163,7 +150,7 @@ public class ClienteRepository {
         Connection con = conexaoBancoDeDados.getConnection();
         try {
             StringBuilder sql = new StringBuilder("SELECT * FROM CLIENTE C");
-            sql.append(" INNER JOIN USUARIO U ON C.ID_USUARIO = U.ID_USUARIO WHERE id_cliente = ?");
+            sql.append(" WHERE id_cliente = ?");
 
             PreparedStatement stmt = con.prepareStatement(sql.toString());
             stmt.setInt(1, idCliente);
@@ -182,7 +169,6 @@ public class ClienteRepository {
     public static Cliente compile(ResultSet result) {
         try {
             Cliente cliente = new Cliente();
-            cliente.setIdUsuario(result.getInt("id_usuario"));
             cliente.setIdCliente(result.getInt("id_cliente"));
             cliente.setNome(result.getString("nome"));
             cliente.setCpf(result.getString("cpf"));

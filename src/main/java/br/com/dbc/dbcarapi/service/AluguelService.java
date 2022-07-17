@@ -3,7 +3,10 @@ package br.com.dbc.dbcarapi.service;
 import br.com.dbc.dbcarapi.dto.AluguelCreateDTO;
 import br.com.dbc.dbcarapi.dto.AluguelDTO;
 import br.com.dbc.dbcarapi.entity.Aluguel;
+import br.com.dbc.dbcarapi.entity.Carro;
+import br.com.dbc.dbcarapi.exception.CustomGlobalExceptionHandler;
 import br.com.dbc.dbcarapi.repository.AluguelRepository;
+import br.com.dbc.dbcarapi.repository.CarroRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,8 @@ public class AluguelService {
     private ObjectMapper objectMapper;
     @Autowired
     private AluguelRepository aluguelRepository;
+    @Autowired
+    private CarroRepository carroRepository;
 
     public List<AluguelDTO> list() throws SQLException {
         return aluguelRepository.list().stream()
@@ -34,6 +39,7 @@ public class AluguelService {
         Aluguel aluguelCriado = aluguelRepository.create(aluguelEntity);
         AluguelDTO aluguelDTO = convertAluguelDTO(aluguelCriado);
         log.info("O novo aluguel no dia " + aluguelDTO.getDiaDoAluguel() + " foi adicionado com sucesso.");
+        carroRepository.editarAlugado(aluguel.getIdCarro(), false);
         return aluguelDTO;
     }
 

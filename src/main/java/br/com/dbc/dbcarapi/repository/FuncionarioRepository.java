@@ -29,7 +29,6 @@ public class FuncionarioRepository {
         return null;
     }
 
-    //Todo -> Método não está funcionando corretamente junto com update
     public Funcionario create(Funcionario funcionario) throws SQLException {
         Connection con = conexaoBancoDeDados.getConnection();
         try {
@@ -37,13 +36,13 @@ public class FuncionarioRepository {
             funcionario.setIdFuncionario(proximoId);
 
             String sql = "INSERT INTO FUNCIONARIO\n" +
-                    "(ID_FUNCIONARIO, ID_USUARIO, MATRICULA)\n" +
+                    "(ID_FUNCIONARIO, NOME, MATRICULA)\n" +
                     "VALUES(?, ?, ?)\n";
 
             PreparedStatement stmt = con.prepareStatement(sql);
 
             stmt.setInt(1, funcionario.getIdFuncionario());
-            stmt.setInt(2, funcionario.getIdUsuario());
+            stmt.setString(2, funcionario.getNome());
             stmt.setString(3, funcionario.getMatricula());
 
             int res = stmt.executeUpdate();
@@ -65,8 +64,8 @@ public class FuncionarioRepository {
     public Funcionario findByIdFuncionario(Integer idFuncionario) throws SQLException {
         Connection con = conexaoBancoDeDados.getConnection();
         try {
-            StringBuilder sql = new StringBuilder("SELECT * FROM FUNCIONARIO F");
-                    sql.append(" INNER JOIN USUARIO U ON U.ID_USUARIO = F.ID_USUARIO WHERE ID_FUNCIONARIO = ?");
+            StringBuilder sql = new StringBuilder("SELECT * FROM FUNCIONARIO");
+                    sql.append(" WHERE ID_FUNCIONARIO = ?");
 
             PreparedStatement stmt = con.prepareStatement(sql.toString());
             stmt.setInt(1, idFuncionario);
@@ -116,13 +115,15 @@ public class FuncionarioRepository {
         try {
             StringBuilder sql = new StringBuilder();
             sql.append("UPDATE FUNCIONARIO SET ");
+            sql.append(" nome = ?, ");
             sql.append(" matricula = ? ");
             sql.append(" WHERE id_funcionario = ? ");
 
             PreparedStatement stmt = con.prepareStatement(sql.toString());
 
-            stmt.setString(1, funcionario.getMatricula());
-            stmt.setInt(2, idFuncionario);
+            stmt.setString(1, funcionario.getNome());
+            stmt.setString(2, funcionario.getMatricula());
+            stmt.setInt(3, idFuncionario);
 
             int res = stmt.executeUpdate();
             return funcionario;
@@ -144,8 +145,7 @@ public class FuncionarioRepository {
         List<Funcionario> funcionarios = new ArrayList<>();
         try {
 
-            StringBuilder sql = new StringBuilder("SELECT * FROM FUNCIONARIO F");
-                   sql.append(" INNER JOIN USUARIO U ON U.ID_USUARIO = F.ID_USUARIO");
+            StringBuilder sql = new StringBuilder("SELECT * FROM FUNCIONARIO");
 
             PreparedStatement stmt = con.prepareStatement(sql.toString());
             ResultSet res = stmt.executeQuery();
@@ -171,10 +171,9 @@ public class FuncionarioRepository {
     private Funcionario compile(ResultSet result) throws SQLException {
         try {
             Funcionario funcionario = new Funcionario();
-            funcionario.setIdUsuario(result.getInt("id_usuario"));
             funcionario.setNome(result.getString("nome"));
-            funcionario.setIdFuncionario(result.getInt("id_funcionario"));
             funcionario.setMatricula(result.getString("matricula"));
+            funcionario.setIdFuncionario(result.getInt("id_funcionario"));
 
             return funcionario;
         } catch (SQLException e) {

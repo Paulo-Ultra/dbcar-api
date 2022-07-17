@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
 import java.time.LocalDate;
 
 @Data
@@ -24,6 +25,7 @@ public class AluguelCreateDTO {
     private Integer idCliente;
 
     @Schema(description = "Data que o carro foi alugado")
+    @Past
     @NotNull
     private LocalDate diaDoAluguel;
 

@@ -9,16 +9,8 @@ import java.util.Objects;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Funcionario extends Usuario{
+public class Funcionario {
     private Integer idFuncionario;
+    private String nome;
     private String matricula;
-
-    @Override
-    public String toString() {
-        return "{"
-                + "\"idUsuario\": " + getIdUsuario() + ", "
-                + "\"Nome\": \"" + getNome() + "\", "
-                + "\"Matrícula\": \"" + matricula
-                + "\"}";
-    }
 }
