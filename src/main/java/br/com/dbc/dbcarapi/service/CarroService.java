@@ -3,7 +3,6 @@ package br.com.dbc.dbcarapi.service;
 import br.com.dbc.dbcarapi.dto.CarroCreateDTO;
 import br.com.dbc.dbcarapi.dto.CarroDTO;
 import br.com.dbc.dbcarapi.entity.Carro;
-import br.com.dbc.dbcarapi.exception.BancoDeDadosException;
 import br.com.dbc.dbcarapi.repository.CarroRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +33,7 @@ public class CarroService {
         Carro carroEntity = convertCarroEntity(carro);
         Carro carroCriado = carroRepository.create(carroEntity);
         CarroDTO carroDTO = convertCarroDTO(carroCriado);
-        log.info("O novo carro" + carroDTO.getNomeCarro() + " foi adicionado com sucesso.");
+        log.info("O novo carro " + carroDTO.getNomeCarro() + " foi adicionado com sucesso.");
         return carroDTO;
     }
 

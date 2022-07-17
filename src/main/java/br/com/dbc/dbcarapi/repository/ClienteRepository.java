@@ -32,6 +32,7 @@ public class ClienteRepository {
         return null;
     }
 
+    //todo -> Depois me explica pq busca o idUsuario aqui tbm
     public Integer getProximoIdUsuario(Connection connection) throws SQLException {
         Connection con = conexaoBancoDeDados.getConnection();
         String sql = "SELECT seq_usuario.nextval mysequence from DUAL";

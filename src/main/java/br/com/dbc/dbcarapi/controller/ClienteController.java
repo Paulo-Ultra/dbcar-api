@@ -84,7 +84,7 @@ public class ClienteController {
     @Operation(summary = "Deletar cliente", description = "Removerá o cliente e todos os seus dados do banco de dados da DBCar.")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "Sucesso! O cliente foi removido com sucesso"),
+                    @ApiResponse(responseCode = "204", description = "Sucesso! O cliente foi removido com sucesso"),
                     @ApiResponse(responseCode = "403", description = "Permissão negada! Você não possui permissão para utilizar este recurso"),
                     @ApiResponse(responseCode = "500", description = "Erro! Durante a execução, foi gerada uma exceção")
             }
@@ -92,6 +92,6 @@ public class ClienteController {
     @DeleteMapping("/{idCliente}")
     public ResponseEntity<Void> delete(@PathVariable("idCliente") Integer idCliente) throws SQLException {
         clienteService.delete(idCliente);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

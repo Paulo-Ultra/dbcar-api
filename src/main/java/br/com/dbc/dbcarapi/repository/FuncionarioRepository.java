@@ -29,6 +29,20 @@ public class FuncionarioRepository {
         return null;
     }
 
+    public Integer getProximoIdUsuario(Connection connection) throws SQLException {
+        Connection con = conexaoBancoDeDados.getConnection();
+        String sql = "SELECT seq_usuario.nextval mysequence from DUAL";
+
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(sql);
+
+        if (res.next()) {
+            return res.getInt("mysequence");
+        }
+        return null;
+    }
+
+    //Todo -> Método não está funcionando corretamente junto com update
     public Funcionario create(Funcionario funcionario) throws SQLException {
         Connection con = conexaoBancoDeDados.getConnection();
         try {
@@ -36,16 +50,16 @@ public class FuncionarioRepository {
             funcionario.setIdFuncionario(proximoId);
 
             String sql = "INSERT INTO FUNCIONARIO\n" +
-                    "(ID_FUNCIONARIO, MATRICULA)\n" +
-                    "VALUES(?, ?)\n";
+                    "(ID_FUNCIONARIO, ID_USUARIO, MATRICULA)\n" +
+                    "VALUES(?, ?, ?)\n";
 
             PreparedStatement stmt = con.prepareStatement(sql);
 
             stmt.setInt(1, funcionario.getIdFuncionario());
-            stmt.setString(2, funcionario.getMatricula());
+            stmt.setInt(2, funcionario.getIdUsuario());
+            stmt.setString(3, funcionario.getMatricula());
 
-//            int res = stmt.executeUpdate();
-//            System.out.println("adicionarFuncionario.res=" + res);
+            int res = stmt.executeUpdate();
             return funcionario;
         } catch (SQLException e) {
             throw new BancoDeDadosException(e.getCause());
@@ -64,14 +78,14 @@ public class FuncionarioRepository {
     public Funcionario findById(Integer id) throws SQLException {
         Connection con = conexaoBancoDeDados.getConnection();
         try {
-            String sql = "SELECT * FROM FUNCIONARIO F\n" +
-                    "INNER JOIN USUARIO U ON (U.ID_USUARIO = F.ID_USUARIO)\n" +
-                    "WHERE ID_FUNCIONARIO = ?\n";
+            StringBuilder sql = new StringBuilder("SELECT * FROM FUNCIONARIO F");
+                    sql.append(" INNER JOIN USUARIO U ON U.ID_USUARIO = F.ID_USUARIO WHERE ID_FUNCIONARIO = ?");
 
-            PreparedStatement stmt = con.prepareStatement(sql);
-
+            PreparedStatement stmt = con.prepareStatement(sql.toString());
             stmt.setInt(1, id);
+
             ResultSet res = stmt.executeQuery();
+
             if(res.next()){
                 return compile(res);
             }
@@ -90,17 +104,14 @@ public class FuncionarioRepository {
         }
     }
 
-    public boolean delete(Integer id) throws SQLException {
+    public void delete(Integer id) throws SQLException {
         Connection con = conexaoBancoDeDados.getConnection();
         try {
             String sql = "DELETE FROM FUNCIONARIO WHERE id_funcionario = ?";
-
             PreparedStatement stmt = con.prepareStatement(sql);
-
             stmt.setInt(1, id);
-            int res = stmt.executeUpdate();
 
-            return res > 0;
+            int res = stmt.executeUpdate();
         } catch (SQLException e) {
             throw new BancoDeDadosException(e.getCause());
         } finally {
@@ -113,12 +124,12 @@ public class FuncionarioRepository {
             }
         }
     }
-    public boolean update(Integer id, Funcionario funcionario) throws SQLException {
+    public Funcionario update(Integer id, Funcionario funcionario) throws SQLException {
         Connection con = conexaoBancoDeDados.getConnection();
         try {
             StringBuilder sql = new StringBuilder();
             sql.append("UPDATE FUNCIONARIO SET ");
-            sql.append(" matricula = ?,");
+            sql.append(" matricula = ? ");
             sql.append(" WHERE id_funcionario = ? ");
 
             PreparedStatement stmt = con.prepareStatement(sql.toString());
@@ -127,7 +138,7 @@ public class FuncionarioRepository {
             stmt.setInt(2, id);
 
             int res = stmt.executeUpdate();
-            return res > 0;
+            return funcionario;
         } catch (SQLException e) {
             throw new BancoDeDadosException(e.getCause());
         } finally {
@@ -144,13 +155,12 @@ public class FuncionarioRepository {
         Connection con = conexaoBancoDeDados.getConnection();
         List<Funcionario> funcionarios = new ArrayList<>();
         try {
-            Statement stmt = con.createStatement();
 
-            String sql = "SELECT * FROM FUNCIONARIO F\n" +
-                    "INNER JOIN USUARIO U ON (U.ID_USUARIO = F.ID_USUARIO)\n" +
-                    "WHERE ID_FUNCIONARIO = ?\n";
+            StringBuilder sql = new StringBuilder("SELECT * FROM FUNCIONARIO F");
+                   sql.append(" INNER JOIN USUARIO U ON U.ID_USUARIO = F.ID_USUARIO");
 
-            ResultSet res = stmt.executeQuery(sql);
+            PreparedStatement stmt = con.prepareStatement(sql.toString());
+            ResultSet res = stmt.executeQuery();
 
             while (res.next()) {
                 Funcionario funcionario = compile(res);
@@ -170,11 +180,17 @@ public class FuncionarioRepository {
         return funcionarios;
     }
     private Funcionario compile(ResultSet result) throws SQLException {
-        Funcionario funcionario = new Funcionario();
-        funcionario.setIdUsuario(result.getInt("id_usuario"));
-        funcionario.setNome(result.getString("nome"));
-        funcionario.setIdFuncionario(result.getInt("id_funcionario"));
-        funcionario.setMatricula(result.getString("matricula"));
-        return funcionario;
+        try {
+            Funcionario funcionario = new Funcionario();
+            funcionario.setIdUsuario(result.getInt("id_usuario"));
+            funcionario.setNome(result.getString("nome"));
+            funcionario.setIdFuncionario(result.getInt("id_funcionario"));
+            funcionario.setMatricula(result.getString("matricula"));
+
+            return funcionario;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
