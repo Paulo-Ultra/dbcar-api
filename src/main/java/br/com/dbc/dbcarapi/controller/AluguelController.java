@@ -37,7 +37,7 @@ public class AluguelController {
         return new ResponseEntity<>(aluguelService.list(), HttpStatus.OK);
     }
 
-    @Operation(summary = "Listar os aluguéis do catálogo pela identificação", description = "Realizará a listagem dos aluguéis no banco de dados pelo número da identificação")
+    @Operation(summary = "Listar os aluguéis pelo identificador", description = "Realizará a listagem dos aluguéis no banco de dados pelo número de identificação")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Sucesso! A listagem dos aluguéis foi realizada com sucesso"),
@@ -63,10 +63,10 @@ public class AluguelController {
         return new ResponseEntity<>(aluguelService.create(aluguel), HttpStatus.CREATED);
     }
 
-    @Operation(summary = "Atualizar um carro do catálogo", description = "Atualizará um carro do catálogo")
+    @Operation(summary = "Atualizar um aluguel", description = "Atualizará um aluguel de um cliente")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "Sucesso! O carro selecionado foi atualizado com sucesso"),
+                    @ApiResponse(responseCode = "200", description = "Sucesso! O aluguel do cliente selecionado foi atualizado com sucesso"),
                     @ApiResponse(responseCode = "403", description = "Permissão negada! Você não possui permissão para utilizar este recurso"),
                     @ApiResponse(responseCode = "500", description = "Erro! Durante a execução, foi gerada uma exceção")
             }
@@ -76,10 +76,10 @@ public class AluguelController {
         return new ResponseEntity<>(aluguelService.update(idAluguel, aluguelAtualizar), HttpStatus.OK);
     }
 
-    @Operation(summary = "Deletar carro do catálogo", description = "Deletará o carro e todos os seus dados do banco de dados")
+    @Operation(summary = "Deletar aluguel", description = "Deletará um aluguel associado ao ID do banco de dados")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "204", description = "Sucesso! O carro e todos os seus dados foram removidos com sucesso do banco de dados"),
+                    @ApiResponse(responseCode = "204", description = "Sucesso! O aluguel foi removido com sucesso do banco de dados"),
                     @ApiResponse(responseCode = "403", description = "Permissao negada! Você não possui permissão para utilizar este recurso"),
                     @ApiResponse(responseCode = "500", description = "Erro! Durante a execuçao, foi gerada uma exceção")
             }

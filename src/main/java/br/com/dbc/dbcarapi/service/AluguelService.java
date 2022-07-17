@@ -52,7 +52,7 @@ public class AluguelService {
         log.info("Deletando aluguel do catálogo...");
         Aluguel verifyAluguel = aluguelRepository.findById(idAluguel);
         aluguelRepository.delete(idAluguel);
-        log.info("O carro " + verifyAluguel.getCarro() + " foi removido do catálogo de aluguéis com sucesso!");
+        log.info("O aluguel " + verifyAluguel.getIdAluguel() + " foi removido do catálogo de aluguéis com sucesso!");
     }
 
     public AluguelDTO findByIdAluguel(Integer idAluguel) throws Exception {

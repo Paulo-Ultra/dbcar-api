@@ -17,9 +17,9 @@ public class AluguelRepository {
     @Autowired
     private ConexaoBancoDeDados conexaoBancoDeDados;
 
-    public Integer getProximoId(Connection connection) throws SQLException {
+    public Integer getProximoIdAluguel(Connection connection) throws SQLException {
         Connection con = conexaoBancoDeDados.getConnection();
-        String sql = "SELECT seq_carro.nextval mysequence from DUAL";
+        String sql = "SELECT seq_aluguel.nextval mysequence from DUAL";
 
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(sql);
@@ -61,7 +61,7 @@ public class AluguelRepository {
     public Aluguel create(Aluguel aluguel) throws SQLException {
         Connection con = conexaoBancoDeDados.getConnection();
         try {
-            Integer proximoId = this.getProximoId(con);
+            Integer proximoId = this.getProximoIdAluguel(con);
             aluguel.setIdAluguel(proximoId);
 
             String sql = "INSERT INTO ALUGUEL\n" +
@@ -91,43 +91,45 @@ public class AluguelRepository {
         }
     }
 
-        public Aluguel update(Integer idAluguel, Aluguel aluguel) throws SQLException {
-            Connection con = conexaoBancoDeDados.getConnection();
+    public Aluguel update(Integer idAluguel, Aluguel aluguel) throws SQLException {
+        Connection con = conexaoBancoDeDados.getConnection();
+        try {
+            StringBuilder sql = new StringBuilder();
+            sql.append("UPDATE ALUGUEL SET ");
+            sql.append(" Dia do Aluguel = ?, ");
+            sql.append(" Dia da Entrega = ?, ");
+            sql.append(" WHERE id_aluguel = ? ");
+
+            PreparedStatement stmt = con.prepareStatement(sql.toString());
+
+            stmt.setInt(1, aluguel.getCliente().getIdCliente());
+            stmt.setInt(2, aluguel.getCarro().getIdCarro());
+            stmt.setDate(3, Date.valueOf(aluguel.getDiaDoAluguel()));
+            stmt.setDate(4, Date.valueOf(aluguel.getDiaDaEntrega()));
+            stmt.setInt(5, idAluguel);
+
+            int res = stmt.executeUpdate();
+            return aluguel;
+        } catch (SQLException e) {
+            throw new BancoDeDadosException(e.getCause());
+        } finally {
             try {
-                StringBuilder sql = new StringBuilder();
-                sql.append("UPDATE ALUGUEL SET ");
-                sql.append(" Dia do Aluguel = ?,");
-                sql.append(" Dia da Entrega = ?,");
-                sql.append((" WHERE id_aluguel = ? "));
-
-                PreparedStatement stmt = con.prepareStatement(sql.toString());
-
-                stmt.setInt(1, aluguel.getCliente().getIdCliente());
-                stmt.setInt(2, aluguel.getCarro().getIdCarro());
-                stmt.setDate(3, Date.valueOf(aluguel.getDiaDoAluguel()));
-                stmt.setDate(4, Date.valueOf(aluguel.getDiaDaEntrega()));
-                stmt.setInt(5, idAluguel);
-
-                int res = stmt.executeUpdate();
-                return aluguel;
-            } catch (SQLException e) {
-                throw new BancoDeDadosException(e.getCause());
-            } finally {
-                try {
-                    if (con != null) {
-                        con.close();
-                    }
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                if (con != null) {
+                    con.close();
                 }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
+    }
 
     public void delete(Integer idAluguel) throws SQLException {
         Connection con = conexaoBancoDeDados.getConnection();
         try {
             String sql = "DELETE FROM ALUGUEL WHERE id_aluguel = ?";
+
             PreparedStatement stmt = con.prepareStatement(sql);
+
             stmt.setInt(1, idAluguel);
 
             int res = stmt.executeUpdate();
@@ -149,7 +151,9 @@ public class AluguelRepository {
         try {
             String sql = "SELECT * FROM ALUGUEL WHERE id_aluguel = ?";
             PreparedStatement stmt = con.prepareStatement(sql);
+
             stmt.setInt(1, idAluguel);
+
             ResultSet result = stmt.executeQuery();
 
             if (result.next()) {
@@ -172,7 +176,7 @@ public class AluguelRepository {
     public static Aluguel compile(ResultSet result) {
         try {
             Aluguel aluguel = new Aluguel();
-            aluguel.setIdAluguel(result.getInt("id_Aluguel"));
+            aluguel.setIdAluguel(result.getInt("id_aluguel"));
             aluguel.getCliente().setIdCliente(result.getInt("id_cliente"));
             aluguel.getCarro().setIdCarro(result.getInt("id_carro"));
             aluguel.setDiaDoAluguel(LocalDate.ofEpochDay(result.getInt("diaDoAluguel")));

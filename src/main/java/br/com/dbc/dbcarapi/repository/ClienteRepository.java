@@ -29,19 +29,19 @@ public class ClienteRepository {
         return null;
     }
 
-    //todo -> Depois me explica pq busca o idUsuario aqui tbm
-    public Integer getProximoIdUsuario(Connection connection) throws SQLException {
-        Connection con = conexaoBancoDeDados.getConnection();
-        String sql = "SELECT seq_usuario.nextval mysequence from DUAL";
-
-        Statement stmt = connection.createStatement();
-        ResultSet res = stmt.executeQuery(sql);
-
-        if (res.next()) {
-            return res.getInt("mysequence");
-        }
-        return null;
-    }
+//    //todo -> Depois me explica pq busca o idUsuario aqui tbm
+//    public Integer getProximoIdUsuario(Connection connection) throws SQLException {
+//        Connection con = conexaoBancoDeDados.getConnection();
+//        String sql = "SELECT seq_usuario.nextval mysequence from DUAL";
+//
+//        Statement stmt = connection.createStatement();
+//        ResultSet res = stmt.executeQuery(sql);
+//
+//        if (res.next()) {
+//            return res.getInt("mysequence");
+//        }
+//        return null;
+//    }
 
     public List<Cliente> list() throws SQLException {
         Connection con = conexaoBancoDeDados.getConnection();

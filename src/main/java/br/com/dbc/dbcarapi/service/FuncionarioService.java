@@ -51,13 +51,13 @@ public class FuncionarioService {
 
     public void delete(Integer idFuncionario) throws SQLException {
         log.info("Removendo cliente...");
-        Funcionario verifyFuncionario = funcionarioRepository.findById(idFuncionario);
+        Funcionario verifyFuncionario = funcionarioRepository.findByIdFuncionario(idFuncionario);
         funcionarioRepository.delete(idFuncionario);
         log.info("O funcionário " + verifyFuncionario.getNome() + " foi removido com sucesso!");
     }
 
     public FuncionarioDTO findByIdFuncionario(Integer idFuncionario) throws Exception {
-        Funcionario funcionarioRecuperado = funcionarioRepository.findById(idFuncionario);
+        Funcionario funcionarioRecuperado = funcionarioRepository.findByIdFuncionario(idFuncionario);
         if(funcionarioRecuperado != null) {
             return convertFuncionarioDTO(funcionarioRecuperado);
         } else {

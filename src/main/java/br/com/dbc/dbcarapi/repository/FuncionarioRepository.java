@@ -15,7 +15,7 @@ public class FuncionarioRepository {
 
     @Autowired
     private ConexaoBancoDeDados conexaoBancoDeDados;
-    public Integer getProximoId(Connection connection) throws SQLException {
+    public Integer getProximoIdFuncionario(Connection connection) throws SQLException {
         Connection con = conexaoBancoDeDados.getConnection();
         String sql = "SELECT seq_funcionario.nextval mysequence from DUAL";
 
@@ -29,24 +29,11 @@ public class FuncionarioRepository {
         return null;
     }
 
-    public Integer getProximoIdUsuario(Connection connection) throws SQLException {
-        Connection con = conexaoBancoDeDados.getConnection();
-        String sql = "SELECT seq_usuario.nextval mysequence from DUAL";
-
-        Statement stmt = connection.createStatement();
-        ResultSet res = stmt.executeQuery(sql);
-
-        if (res.next()) {
-            return res.getInt("mysequence");
-        }
-        return null;
-    }
-
     //Todo -> Método não está funcionando corretamente junto com update
     public Funcionario create(Funcionario funcionario) throws SQLException {
         Connection con = conexaoBancoDeDados.getConnection();
         try {
-            Integer proximoId = this.getProximoId(con);
+            Integer proximoId = this.getProximoIdFuncionario(con);
             funcionario.setIdFuncionario(proximoId);
 
             String sql = "INSERT INTO FUNCIONARIO\n" +
@@ -75,14 +62,14 @@ public class FuncionarioRepository {
     }
 
 
-    public Funcionario findById(Integer id) throws SQLException {
+    public Funcionario findByIdFuncionario(Integer idFuncionario) throws SQLException {
         Connection con = conexaoBancoDeDados.getConnection();
         try {
             StringBuilder sql = new StringBuilder("SELECT * FROM FUNCIONARIO F");
                     sql.append(" INNER JOIN USUARIO U ON U.ID_USUARIO = F.ID_USUARIO WHERE ID_FUNCIONARIO = ?");
 
             PreparedStatement stmt = con.prepareStatement(sql.toString());
-            stmt.setInt(1, id);
+            stmt.setInt(1, idFuncionario);
 
             ResultSet res = stmt.executeQuery();
 
@@ -104,12 +91,12 @@ public class FuncionarioRepository {
         }
     }
 
-    public void delete(Integer id) throws SQLException {
+    public void delete(Integer idFuncionario) throws SQLException {
         Connection con = conexaoBancoDeDados.getConnection();
         try {
             String sql = "DELETE FROM FUNCIONARIO WHERE id_funcionario = ?";
             PreparedStatement stmt = con.prepareStatement(sql);
-            stmt.setInt(1, id);
+            stmt.setInt(1, idFuncionario);
 
             int res = stmt.executeUpdate();
         } catch (SQLException e) {
@@ -124,7 +111,7 @@ public class FuncionarioRepository {
             }
         }
     }
-    public Funcionario update(Integer id, Funcionario funcionario) throws SQLException {
+    public Funcionario update(Integer idFuncionario, Funcionario funcionario) throws SQLException {
         Connection con = conexaoBancoDeDados.getConnection();
         try {
             StringBuilder sql = new StringBuilder();
@@ -135,7 +122,7 @@ public class FuncionarioRepository {
             PreparedStatement stmt = con.prepareStatement(sql.toString());
 
             stmt.setString(1, funcionario.getMatricula());
-            stmt.setInt(2, id);
+            stmt.setInt(2, idFuncionario);
 
             int res = stmt.executeUpdate();
             return funcionario;
@@ -151,6 +138,7 @@ public class FuncionarioRepository {
             }
         }
     }
+
     public List<Funcionario> list() throws SQLException {
         Connection con = conexaoBancoDeDados.getConnection();
         List<Funcionario> funcionarios = new ArrayList<>();
@@ -179,6 +167,7 @@ public class FuncionarioRepository {
         }
         return funcionarios;
     }
+
     private Funcionario compile(ResultSet result) throws SQLException {
         try {
             Funcionario funcionario = new Funcionario();
