@@ -1,12 +1,12 @@
 package br.com.dbc.dbcarapi.service;
 
-
+import br.com.dbc.dbcarapi.dto.AluguelDTO;
 import br.com.dbc.dbcarapi.dto.ClienteDTO;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -15,13 +15,13 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class EmailService {
 
     private final freemarker.template.Configuration fnConfiguration;
@@ -31,21 +31,72 @@ public class EmailService {
 
     private final JavaMailSender emailSender;
 
-    public void sendEmailCliente(ClienteDTO clienteDTO) {
-        log.info("Enviando e-mail de boas vindas para " + clienteDTO.getNome());
-        SimpleMailMessage mensagem = new SimpleMailMessage();
-        mensagem.setFrom(from);
-        mensagem.setTo(clienteDTO.getEmail());
-        mensagem.setSubject("Seja bem vindo a DBCAR!");
-        mensagem.setText("Saudações " + clienteDTO.getNome() + "\n" + "Seu cadastro na nossa locadora foi realizado com sucesso! Seu identificador de cliente é: " + clienteDTO.getIdCliente() + "\n" + "Qual dúvida, reclamação ou sugestão entre em contato conosco pelo e-mail: suportedbcar@dbcar.com.br" + "\n" + "Atenciosamente, Equipe DBCAR.");
+    public void sendEmailNovoCliente(ClienteDTO clienteDTO, String tipo) {
+        MimeMessage mimeMessage = emailSender.createMimeMessage();
+        try {
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+            mimeMessageHelper.setFrom(from);
+            mimeMessageHelper.setTo(clienteDTO.getEmail());
+            if (tipo.equalsIgnoreCase("create")) {
+                mimeMessageHelper.setSubject("Seja bem vindo(a) a DBCar");
+            } else if (tipo.equalsIgnoreCase("update")) {
+                mimeMessageHelper.setSubject("Seus dados foram atualizados em nosso sistema");
+            } else if (tipo.equalsIgnoreCase("delete")) {
+                mimeMessageHelper.setSubject("Seus dados foram removidos do nosso sistema!");
+            }
+            mimeMessageHelper.setText(getContentFromTemplateCliente(clienteDTO, tipo), true);
+            emailSender.send(mimeMessageHelper.getMimeMessage());
+        } catch (MessagingException | IOException | TemplateException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void sendEmailAluguel(ClienteDTO clienteDTO) {
-        log.info("Enviando e-mail de aluguel realizado...");
-        SimpleMailMessage mensagem = new SimpleMailMessage();
-        mensagem.setFrom(from);
-        mensagem.setTo(clienteDTO.getEmail());
-        mensagem.setSubject("Parabéns, seu aluguel foi realizado com sucesso!");
-        mensagem.setText("Parabéns " + clienteDTO.getNome() + "\n" + "Seu aluguel do veículo foi realizado com sucesso! Qual dúvida, reclamação ou sugestão entre em contato conosco pelo e-mail: suportedbcar@dbcar.com.br" + "\n" + "Atenciosamente, Equipe DBCAR.");
+    public String getContentFromTemplateCliente(ClienteDTO clienteDTO, String tipo) throws IOException, TemplateException {
+        Map<String, Object> dados = new HashMap<>();
+        dados.put("nome", clienteDTO.getNome());
+        dados.put("id", clienteDTO.getIdCliente());
+        dados.put("email", from);
+
+        Template template;
+        if (tipo.equalsIgnoreCase("create")) {
+            template = fnConfiguration.getTemplate("emailCreateCliente-template.ftl");
+        } else if (tipo.equalsIgnoreCase("update")) {
+            template = fnConfiguration.getTemplate("emailUpdateCliente-template.ftl");
+        } else {
+            template = fnConfiguration.getTemplate("emailDeleteCliente-template.ftl");
+        }
+        String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, dados);
+        return html;
+    }
+
+    public void sendEmailCarroCliente(ClienteDTO clienteDTO, AluguelDTO aluguelDTO, String tipo) {
+        MimeMessage mimeMessage = emailSender.createMimeMessage();
+        try {
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+            mimeMessageHelper.setFrom(from);
+            mimeMessageHelper.setTo(clienteDTO.getEmail());
+            if (tipo.equalsIgnoreCase("alugado")) {
+                mimeMessageHelper.setSubject("Carro alugado com sucesso!");
+            }
+            mimeMessageHelper.setText(getContentFromTemplateAluguel(clienteDTO, aluguelDTO, tipo), true);
+            emailSender.send(mimeMessageHelper.getMimeMessage());
+        } catch (MessagingException | IOException | TemplateException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getContentFromTemplateAluguel(ClienteDTO clienteDTO, AluguelDTO aluguelDTO, String tipo) throws IOException, TemplateException {
+        Map<String, Object> dados = new HashMap<>();
+        dados.put("nome", clienteDTO.getNome());
+        dados.put("id", clienteDTO.getIdCliente());
+        dados.put("idCarro", aluguelDTO.getIdCarro());
+        dados.put("email", from);
+
+        Template template = null;
+        if (tipo.equalsIgnoreCase("alugado")) {
+            template = fnConfiguration.getTemplate("emailAluguelCarro-template.ftl");
+        }
+        String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, dados);
+        return html;
     }
 }

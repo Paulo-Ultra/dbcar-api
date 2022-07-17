@@ -60,7 +60,8 @@ public class ClienteService {
         }
         ClienteDTO clienteDTO = convertClienteDTO(clienteEntity);
         log.info("O cliente " + clienteDTO.getNome() + " foi adicionado com sucesso ao banco de dados!");
-        emailService.sendEmailCliente(clienteDTO);
+        String tipo = "create";
+        emailService.sendEmailNovoCliente(clienteDTO, tipo);
         return clienteDTO;
     }
 
@@ -78,6 +79,8 @@ public class ClienteService {
         clienteDTO.setIdCliente(idCliente);
 
         log.info("Dados do cliente " + clienteDTO.getNome() + " foram atualizados.");
+        String tipo = "update";
+        emailService.sendEmailNovoCliente(clienteDTO, tipo);
         return clienteDTO;
     }
 
@@ -91,7 +94,7 @@ public class ClienteService {
             e.printStackTrace();
             throw new BancoDeDadosException(e.getCause());
         } catch (NullPointerException e) {
-            throw new NullPointerException("O identificador (ID) informado não consta no nosso banco de dados!");
+            throw new NullPointerException("O identificador (ID) informado não consta em nosso banco de dados!");
         }
     }
 

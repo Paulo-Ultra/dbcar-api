@@ -15,18 +15,18 @@
                         style="background-color: #f2f2f2; font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #000000; padding: 0px 15px 10px 15px;">
 
                         <div style="font-size: 48px; color:#010326;">
-                            <b>Notificação de Aluguel na DBCar</b>
+                            <b>Notificação de Atualização de dados</b>
                             <br>
                         </div>
 
                         <div style="font-size: 24px; color: #010326;">
                             <b>Olá, ${nome}</b>
-                            <b>Seu aluguel de veículo em nossa locadora foi realizado com sucesso. Seu código de identificação é ${id}, e o código do seu veículo é ${idCarro}.</b>
-                            <br><b>Qualquer dúvida, entre em contato com o suporte pelo e-mail: ${email}.</b>
+                            <b>Informamos que seus dados foram atualizados com sucesso em nosso sistema.</b>
+                            <br><b>Qualquer dúvida, reclamação ou propostas entre em contato com o suporte pelo e-mail: ${email}.</b>
                         </div>
                         <div>
                             <b>Atenciosamente,</b>
-                            <br><b>Diretoria.</b>
+                            <br><b>Suporte DBCar.</b>
                         </div>
                     </td>
                 </tr>
