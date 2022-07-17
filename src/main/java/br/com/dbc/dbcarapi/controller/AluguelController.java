@@ -59,7 +59,7 @@ public class AluguelController {
             }
     )
     @PostMapping
-    public ResponseEntity<AluguelDTO> create(@RequestBody @Valid AluguelCreateDTO aluguel) throws SQLException {
+    public ResponseEntity<AluguelDTO> create(@RequestBody @Valid AluguelCreateDTO aluguel) throws Exception {
         return new ResponseEntity<>(aluguelService.create(aluguel), HttpStatus.CREATED);
     }
 

@@ -4,7 +4,6 @@ import br.com.dbc.dbcarapi.dto.AluguelCreateDTO;
 import br.com.dbc.dbcarapi.dto.AluguelDTO;
 import br.com.dbc.dbcarapi.entity.Aluguel;
 import br.com.dbc.dbcarapi.entity.Carro;
-import br.com.dbc.dbcarapi.exception.CustomGlobalExceptionHandler;
 import br.com.dbc.dbcarapi.repository.AluguelRepository;
 import br.com.dbc.dbcarapi.repository.CarroRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,7 +32,7 @@ public class AluguelService {
                 .collect(Collectors.toList());
     }
 
-    public AluguelDTO create(AluguelCreateDTO aluguel) throws SQLException {
+    public AluguelDTO create(AluguelCreateDTO aluguel) throws Exception {
         log.info("Adicionando o novo aluguel...");
         Aluguel aluguelEntity = convertAluguelEntity(aluguel);
         Aluguel aluguelCriado = aluguelRepository.create(aluguelEntity);
@@ -69,6 +68,21 @@ public class AluguelService {
             throw new Exception("Carro não encontrado");
         }
     }
+
+    public Double calcularValor(Carro carro, Aluguel aluguel) throws Exception {
+        switch (carro.getClasse().getTipo()) {
+            case "A":
+                return aluguel.diasComCarro() * carro.getPrecoDiaria() * 1.5;
+            case "B":
+                return aluguel.diasComCarro() * carro.getPrecoDiaria() * 1.2;
+            case "C":
+                return aluguel.diasComCarro() * carro.getPrecoDiaria();
+            default:
+                System.out.println("O carro informado não está disponível.");
+                return null;
+        }
+    }
+
     public Aluguel convertAluguelEntity(AluguelCreateDTO aluguel) {
         return objectMapper.convertValue(aluguel, Aluguel.class);
     }

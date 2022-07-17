@@ -32,4 +32,7 @@ public class AluguelCreateDTO {
     @Schema(description = "Data que o carro foi devolvido")
     @NotNull
     private LocalDate diaDaEntrega;
+    @Schema(description = "Valor total do aluguel")
+    @NotNull
+    private Double valor;
 }

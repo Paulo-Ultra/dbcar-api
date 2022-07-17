@@ -2,6 +2,7 @@ package br.com.dbc.dbcarapi.service;
 
 import br.com.dbc.dbcarapi.dto.CarroCreateDTO;
 import br.com.dbc.dbcarapi.dto.CarroDTO;
+import br.com.dbc.dbcarapi.entity.Aluguel;
 import br.com.dbc.dbcarapi.entity.Carro;
 import br.com.dbc.dbcarapi.repository.CarroRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,6 +22,8 @@ public class CarroService {
     private ObjectMapper objectMapper;
     @Autowired
     private CarroRepository carroRepository;
+    @Autowired
+    private AluguelService aluguelService;
 
     public List<CarroDTO> list() throws SQLException {
         return carroRepository.list().stream()

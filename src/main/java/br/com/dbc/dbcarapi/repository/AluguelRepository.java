@@ -65,8 +65,8 @@ public class AluguelRepository {
             aluguel.setIdAluguel(proximoId);
 
             String sql = "INSERT INTO ALUGUEL\n" +
-                    "(ID_ALUGUEL, ID_CLIENTE, ID_CARRO, diaDoAluguel, diaDaEntrega)\n" +
-                    "VALUES(?, ?, ?, ?, ?)\n";
+                    "(ID_ALUGUEL, ID_CLIENTE, ID_CARRO, diaDoAluguel, diaDaEntrega, valor)\n" +
+                    "VALUES(?, ?, ?, ?, ?, ?)\n";
 
             PreparedStatement stmt = con.prepareStatement(sql);
 
@@ -75,6 +75,7 @@ public class AluguelRepository {
             stmt.setInt(3, aluguel.getIdCarro());
             stmt.setDate(4, Date.valueOf(aluguel.getDiaDoAluguel()));
             stmt.setDate(5, Date.valueOf(aluguel.getDiaDaEntrega()));
+            stmt.setDouble(5, aluguel.getValor());
 
             int res = stmt.executeUpdate();
             return aluguel;
@@ -99,7 +100,8 @@ public class AluguelRepository {
             sql.append(" ID_CLIENTE = ?, ");
             sql.append(" ID_CARRO = ?, ");
             sql.append(" Dia do Aluguel = ?, ");
-            sql.append(" Dia da Entrega = ? ");
+            sql.append(" Dia da Entrega = ?, ");
+            sql.append(" Valor = ? ");
             sql.append(" WHERE id_aluguel = ? ");
 
             PreparedStatement stmt = con.prepareStatement(sql.toString());
@@ -183,6 +185,7 @@ public class AluguelRepository {
             aluguel.setIdCarro(result.getInt("id_carro"));
             aluguel.setDiaDoAluguel(LocalDate.parse(String.valueOf(result.getDate("diaDoAluguel"))));
             aluguel.setDiaDaEntrega(LocalDate.parse(String.valueOf(result.getDate("diaDaEntrega"))));
+            aluguel.setValor(result.getDouble("valor"));
             return aluguel;
         } catch (SQLException e) {
             e.printStackTrace();

@@ -1,62 +1,63 @@
 CREATE TABLE FUNCIONARIO (
     id_funcionario NUMBER(38) NOT NULL,
-    nome VARCHAR2(250) NOT NULL,
-    matricula VARCHAR2(100) UNIQUE NOT NULL,
+    nome           VARCHAR2(250) NOT NULL,
+    matricula      VARCHAR2(100) UNIQUE NOT NULL,
     PRIMARY KEY (id_funcionario)
 );
 
 CREATE TABLE CLIENTE (
     id_cliente NUMBER(38) NOT NULL,
-    nome VARCHAR2(250) NOT NULL,
-    cpf VARCHAR2(14) UNIQUE NOT NULL,
-    telefone VARCHAR2(14) NOT NULL,
-    endereco VARCHAR2(200) NOT NULL,
-    email VARCHAR2(250) NOT NULL,
+    nome       VARCHAR2(250) NOT NULL,
+    cpf        VARCHAR2(14) UNIQUE NOT NULL,
+    telefone   VARCHAR2(14) NOT NULL,
+    endereco   VARCHAR2(200) NOT NULL,
+    email      VARCHAR2(250) NOT NULL,
     PRIMARY KEY (id_cliente)
 );
 
 CREATE TABLE CARRO (
-    id_carro NUMBER(38) NOT NULL,
-    alugado CHAR(1),
-    nome VARCHAR2(200) NOT NULL,
-    marca VARCHAR2(200) NOT NULL,
-    classe CHAR(1) NOT NULL,
+    id_carro               NUMBER(38) NOT NULL,
+    alugado                CHAR(1),
+    nome                   VARCHAR2(200) NOT NULL,
+    marca                  VARCHAR2(200) NOT NULL,
+    classe                 CHAR(1)       NOT NULL,
     quantidade_passageiros NUMBER(38) NOT NULL,
-    km_rodados NUMBER(38) NOT NULL,
-    preco_diaria DECIMAL(8,2) NOT NULL,
+    km_rodados             NUMBER(38) NOT NULL,
+    preco_diaria           DECIMAL(8, 2) NOT NULL,
     PRIMARY KEY (id_carro)
 );
 
 CREATE TABLE ALUGUEL (
-    id_aluguel NUMBER(38) NOT NULL,
-    id_carro NUMBER(38) NOT NULL,
-    id_cliente NUMBER(38) NOT NULL,
-    diaDoAluguel DATE NOT NULL,
-    diaDaEntrega DATE NOT NULL,
+    id_aluguel   NUMBER(38) NOT NULL,
+    id_carro     NUMBER(38) NOT NULL,
+    id_cliente   NUMBER(38) NOT NULL,
+    diaDoAluguel DATE          NOT NULL,
+    diaDaEntrega DATE          NOT NULL,
+    valor        DECIMAL(8, 2) NOT NULL,
     PRIMARY KEY (id_aluguel),
     CONSTRAINT FK_CLIENTE_ALUGUEL FOREIGN KEY (ID_CLIENTE) REFERENCES CLIENTE (ID_CLIENTE),
     CONSTRAINT FK_CARRO_ALUGUEL FOREIGN KEY (ID_CARRO) REFERENCES CARRO (ID_CARRO)
 );
 
 CREATE SEQUENCE SEQ_FUNCIONARIO
-START WITH 1
-INCREMENT BY 1
-NOCACHE NOCYCLE;
+    START WITH 1
+    INCREMENT BY 1
+    NOCACHE NOCYCLE;
 
 CREATE SEQUENCE SEQ_CLIENTE
-START WITH 1
-INCREMENT BY 1
-NOCACHE NOCYCLE;
+    START WITH 1
+    INCREMENT BY 1
+    NOCACHE NOCYCLE;
 
 CREATE SEQUENCE SEQ_CARRO
-START WITH 1
-INCREMENT BY 1
-NOCACHE NOCYCLE;
+    START WITH 1
+    INCREMENT BY 1
+    NOCACHE NOCYCLE;
 
 CREATE SEQUENCE SEQ_ALUGUEL
-START WITH 1
-INCREMENT BY 1
-NOCACHE NOCYCLE;
+    START WITH 1
+    INCREMENT BY 1
+    NOCACHE NOCYCLE;
 
 -- INSERT'S DOS FUNCIONARIOS;
 ----------------------------------------------------------------------------------------------
