@@ -113,9 +113,6 @@ public class AluguelService {
         return diasComCarro;
     }
 
-//    public List<CarroDTO> carroAlugado() throws SQLException {
-//        return carroRepository.list()
-//}
     public Aluguel convertAluguelEntity(AluguelCreateDTO aluguel) {
         return objectMapper.convertValue(aluguel, Aluguel.class);
     }
