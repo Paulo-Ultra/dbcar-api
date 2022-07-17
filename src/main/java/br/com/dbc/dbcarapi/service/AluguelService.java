@@ -4,7 +4,6 @@ import br.com.dbc.dbcarapi.dto.AluguelCreateDTO;
 import br.com.dbc.dbcarapi.dto.AluguelDTO;
 import br.com.dbc.dbcarapi.entity.Aluguel;
 import br.com.dbc.dbcarapi.entity.Carro;
-import br.com.dbc.dbcarapi.exception.CustomGlobalExceptionHandler;
 import br.com.dbc.dbcarapi.repository.AluguelRepository;
 import br.com.dbc.dbcarapi.repository.CarroRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,7 +32,7 @@ public class AluguelService {
                 .collect(Collectors.toList());
     }
 
-    public AluguelDTO create(AluguelCreateDTO aluguel) throws SQLException {
+    public AluguelDTO create(AluguelCreateDTO aluguel) throws Exception {
         log.info("Adicionando o novo aluguel...");
         Aluguel aluguelEntity = convertAluguelEntity(aluguel);
         Aluguel aluguelCriado = aluguelRepository.create(aluguelEntity);
@@ -71,7 +69,7 @@ public class AluguelService {
         }
     }
 
-    public Double calculatarValor(Carro carro, Aluguel aluguel) {
+    public Double calcularValor(Carro carro, Aluguel aluguel) throws Exception {
         switch (carro.getClasse().getTipo()) {
             case "A":
                 return aluguel.diasComCarro() * carro.getPrecoDiaria() * 1.5;
