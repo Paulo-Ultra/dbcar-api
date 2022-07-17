@@ -71,7 +71,7 @@ public class AluguelService {
         }
     }
 
-    public Double calculatarValor(Carro carro, Aluguel aluguel) {
+    public Double calcularValor(Carro carro, Aluguel aluguel) {
         switch (carro.getClasse().getTipo()) {
             case "A":
                 return aluguel.diasComCarro() * carro.getPrecoDiaria() * 1.5;
