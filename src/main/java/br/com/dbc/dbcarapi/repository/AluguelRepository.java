@@ -75,7 +75,7 @@ public class AluguelRepository {
             stmt.setInt(3, aluguel.getIdCarro());
             stmt.setDate(4, Date.valueOf(aluguel.getDiaDoAluguel()));
             stmt.setDate(5, Date.valueOf(aluguel.getDiaDaEntrega()));
-            stmt.setDouble(5, aluguel.getValor());
+            stmt.setDouble(6, aluguel.getValor());
 
             int res = stmt.executeUpdate();
             return aluguel;
@@ -110,7 +110,8 @@ public class AluguelRepository {
             stmt.setInt(2, aluguel.getIdCarro());
             stmt.setDate(3, Date.valueOf(aluguel.getDiaDoAluguel()));
             stmt.setDate(4, Date.valueOf(aluguel.getDiaDaEntrega()));
-            stmt.setInt(5, idAluguel);
+            stmt.setDouble(5, aluguel.getValor());
+            stmt.setInt(6, idAluguel);
 
             int res = stmt.executeUpdate();
             return aluguel;

@@ -4,6 +4,7 @@ import br.com.dbc.dbcarapi.dto.CarroCreateDTO;
 import br.com.dbc.dbcarapi.dto.CarroDTO;
 import br.com.dbc.dbcarapi.entity.Aluguel;
 import br.com.dbc.dbcarapi.entity.Carro;
+import br.com.dbc.dbcarapi.exception.BancoDeDadosException;
 import br.com.dbc.dbcarapi.repository.CarroRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -26,42 +27,70 @@ public class CarroService {
     private AluguelService aluguelService;
 
     public List<CarroDTO> list() throws SQLException {
-        return carroRepository.list().stream()
-                .map(carro -> objectMapper.convertValue(carro, CarroDTO.class))
-                .collect(Collectors.toList());
+        log.info("Listando carros...");
+        try{
+            return carroRepository.list().stream()
+                    .map(carro -> objectMapper.convertValue(carro, CarroDTO.class))
+                    .collect(Collectors.toList());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new BancoDeDadosException(e.getCause());
+        }
     }
 
     public CarroDTO create(CarroCreateDTO carro) throws SQLException {
         log.info("Adicionando o novo carro...");
         Carro carroEntity = convertCarroEntity(carro);
-        Carro carroCriado = carroRepository.create(carroEntity);
-        CarroDTO carroDTO = convertCarroDTO(carroCriado);
+        try {
+            carroEntity = carroRepository.create(carroEntity);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new BancoDeDadosException(e.getCause());
+        }
+        CarroDTO carroDTO = convertCarroDTO(carroEntity);
         log.info("O novo carro " + carroDTO.getNomeCarro() + " foi adicionado com sucesso.");
         return carroDTO;
     }
 
     public CarroDTO update(Integer idCarro, CarroCreateDTO carroCreateDTO) throws Exception {
         log.info("Atualizando dados do carro...");
-            findByIdCarro(idCarro);
-            Carro carroEntity = convertCarroEntity(carroCreateDTO);
-            Carro carroAtualizar = carroRepository.update(idCarro, carroEntity);
-            CarroDTO carroDTO = convertCarroDTO(carroAtualizar);
-            carroDTO.setIdCarro(idCarro);
-            log.info("Dados do carro atualizados " + carroAtualizar);
-            return carroDTO;
+        findByIdCarro(idCarro);
+        Carro carroEntity = convertCarroEntity(carroCreateDTO);
+        try {
+            carroEntity = carroRepository.update(idCarro, carroEntity);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new BancoDeDadosException(e.getCause());
+        }
+        CarroDTO carroDTO = convertCarroDTO(carroEntity);
+        carroDTO.setIdCarro(idCarro);
+        log.info("Dados do carro atualizados " + carroDTO);
+        return carroDTO;
     }
 
     public void delete(Integer idCarro) throws SQLException {
         log.info("Deletando carro do catálogo...");
-        Carro verifyCarro = carroRepository.findById(idCarro);
-        carroRepository.delete(idCarro);
-        log.info("O carro " + verifyCarro.getNomeCarro() + " foi removido do catálogo com sucesso!");
+        try {
+            Carro verifyCarro = carroRepository.findById(idCarro);
+            carroRepository.delete(idCarro);
+            log.info("O carro " + verifyCarro.getNomeCarro() + " foi removido do catálogo com sucesso!");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new BancoDeDadosException(e.getCause());
+        } catch (NullPointerException e) {
+            throw new NullPointerException("O identificador (ID) informado não consta em nosso banco de dados!");
+        }
     }
 
     public List<CarroDTO> listNaoAlugados() throws SQLException {
-        return carroRepository.listarNaoAlugaDos().stream()
-                .map(carro -> objectMapper.convertValue(carro, CarroDTO.class))
-                .collect(Collectors.toList());
+        try {
+            return carroRepository.listarNaoAlugaDos().stream()
+                    .map(carro -> objectMapper.convertValue(carro, CarroDTO.class))
+                    .collect(Collectors.toList());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new BancoDeDadosException(e.getCause());
+        }
     }
 
     public CarroDTO findByIdCarro(Integer idCarro) throws Exception {

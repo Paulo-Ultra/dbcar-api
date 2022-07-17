@@ -2,8 +2,10 @@ package br.com.dbc.dbcarapi.service;
 
 import br.com.dbc.dbcarapi.dto.AluguelCreateDTO;
 import br.com.dbc.dbcarapi.dto.AluguelDTO;
+import br.com.dbc.dbcarapi.dto.CarroDTO;
 import br.com.dbc.dbcarapi.entity.Aluguel;
 import br.com.dbc.dbcarapi.entity.Carro;
+import br.com.dbc.dbcarapi.exception.BancoDeDadosException;
 import br.com.dbc.dbcarapi.repository.AluguelRepository;
 import br.com.dbc.dbcarapi.repository.CarroRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,18 +30,28 @@ public class AluguelService {
     private CarroRepository carroRepository;
 
     public List<AluguelDTO> list() throws SQLException {
-        return aluguelRepository.list().stream()
-                .map(aluguel -> objectMapper.convertValue(aluguel, AluguelDTO.class))
-                .collect(Collectors.toList());
+        try {
+            return aluguelRepository.list().stream()
+                    .map(aluguel -> objectMapper.convertValue(aluguel, AluguelDTO.class))
+                    .collect(Collectors.toList());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new BancoDeDadosException(e.getCause());
+        }
     }
 
     public AluguelDTO create(AluguelCreateDTO aluguel) throws Exception {
         log.info("Adicionando o novo aluguel...");
         Aluguel aluguelEntity = convertAluguelEntity(aluguel);
-        Aluguel aluguelCriado = aluguelRepository.create(aluguelEntity);
-        AluguelDTO aluguelDTO = convertAluguelDTO(aluguelCriado);
+        try {
+            aluguelEntity = aluguelRepository.create(aluguelEntity);
+            carroRepository.editarAlugado(aluguel.getIdCarro(), false);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new BancoDeDadosException(e.getCause());
+        }
+        AluguelDTO aluguelDTO = convertAluguelDTO(aluguelEntity);
         log.info("O novo aluguel no dia " + aluguelDTO.getDiaDoAluguel() + " foi adicionado com sucesso.");
-        carroRepository.editarAlugado(aluguel.getIdCarro(), false);
         return aluguelDTO;
     }
 
@@ -47,23 +59,35 @@ public class AluguelService {
         log.info("Atualizando dados do aluguel...");
         findByIdAluguel(idAluguel);
         Aluguel aluguelEntity = convertAluguelEntity(aluguelCreateDTO);
-        Aluguel aluguelAtualizar = aluguelRepository.create(aluguelEntity);
-        AluguelDTO aluguelDTO = convertAluguelDTO(aluguelAtualizar);
+        try {
+            aluguelEntity = aluguelRepository.create(aluguelEntity);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new BancoDeDadosException(e.getCause());
+        }
+        AluguelDTO aluguelDTO = convertAluguelDTO(aluguelEntity);
         aluguelDTO.setIdAluguel(idAluguel);
-        log.info("Dados do aluguel atualizados " + aluguelAtualizar);
+        log.info("Dados do aluguel atualizados " + aluguelDTO);
         return aluguelDTO;
     }
 
     public void delete(Integer idAluguel) throws SQLException {
         log.info("Deletando aluguel do catálogo...");
-        Aluguel verifyAluguel = aluguelRepository.findById(idAluguel);
-        aluguelRepository.delete(idAluguel);
-        log.info("O aluguel " + verifyAluguel.getIdAluguel() + " foi removido do catálogo de aluguéis com sucesso!");
+        try {
+            Aluguel verifyAluguel = aluguelRepository.findById(idAluguel);
+            aluguelRepository.delete(idAluguel);
+            log.info("O aluguel " + verifyAluguel.getIdAluguel() + " foi removido do catálogo de aluguéis com sucesso!");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new BancoDeDadosException(e.getCause());
+        } catch (NullPointerException e) {
+            throw new NullPointerException("O identificador (ID) informado não consta em nosso banco de dados!");
+        }
     }
 
     public AluguelDTO findByIdAluguel(Integer idAluguel) throws Exception {
         Aluguel aluguelRecuperado = aluguelRepository.findById(idAluguel);
-        if(aluguelRecuperado != null) {
+        if (aluguelRecuperado != null) {
             return convertAluguelDTO(aluguelRecuperado);
         } else {
             throw new Exception("Carro não encontrado");
@@ -83,11 +107,15 @@ public class AluguelService {
                 return null;
         }
     }
+
     public Long diasComCarro(Aluguel aluguel) {
         Long diasComCarro = aluguel.getDiaDoAluguel().until(aluguel.getDiaDaEntrega(), ChronoUnit.DAYS);
         return diasComCarro;
     }
 
+//    public List<CarroDTO> carroAlugado() throws SQLException {
+//        return carroRepository.list()
+//}
     public Aluguel convertAluguelEntity(AluguelCreateDTO aluguel) {
         return objectMapper.convertValue(aluguel, Aluguel.class);
     }
