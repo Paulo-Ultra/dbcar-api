@@ -45,7 +45,7 @@ public class FuncionarioController {
             }
     )
     @GetMapping("{idFuncionario}")
-    public ResponseEntity<UsuarioDTO> findById(Integer idFuncionario) throws Exception {
+    public ResponseEntity<FuncionarioDTO> findById(Integer idFuncionario) throws Exception {
         return new ResponseEntity<>(funcionarioService.findByIdFuncionario(idFuncionario), HttpStatus.OK);
     }
 
@@ -71,7 +71,7 @@ public class FuncionarioController {
             }
     )
     @PutMapping("/{idFuncionario}")
-    public ResponseEntity<UsuarioDTO> update(@PathVariable("idFuncionario") Integer idFuncionario, @RequestBody @Valid FuncionarioCreateDTO funcionarioAtualizar) throws Exception {
+    public ResponseEntity<FuncionarioDTO> update(@PathVariable("idFuncionario") Integer idFuncionario, @RequestBody @Valid FuncionarioCreateDTO funcionarioAtualizar) throws Exception {
         return new ResponseEntity<>(funcionarioService.update(idFuncionario, funcionarioAtualizar), HttpStatus.OK);
     }
 

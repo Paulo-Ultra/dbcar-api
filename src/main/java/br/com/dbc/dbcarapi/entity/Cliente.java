@@ -9,15 +9,12 @@ import java.util.Objects;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Cliente extends Usuario {
+public class Cliente  {
     private Integer idCliente;
+    private String nome;
     private String cpf;
     private String telefone;
     private String endereco;
     private String email;
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getIdUsuario(), getNome(), cpf, telefone, endereco, email);
-    }
 }

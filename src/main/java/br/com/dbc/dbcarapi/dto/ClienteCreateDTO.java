@@ -10,8 +10,11 @@ import javax.validation.constraints.NotBlank;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClienteCreateDTO extends UsuarioDTO {
+public class ClienteCreateDTO {
 
+    @Schema(description = "Nome do cliente")
+    @NotBlank
+    private String nome;
     @Schema(description = "CPF do cliente")
     @NotBlank
     private String cpf;
