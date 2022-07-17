@@ -17,11 +17,11 @@ public class AluguelCreateDTO {
 
     @Schema(description = "Carro associado ao aluguel")
     @NotNull
-    private Carro carro;
+    private Integer idCarro;
 
     @Schema(description = "Cliente associado ao aluguel")
     @NotNull
-    private Cliente cliente;
+    private Integer idCliente;
 
     @Schema(description = "Data que o carro foi alugado")
     @NotNull

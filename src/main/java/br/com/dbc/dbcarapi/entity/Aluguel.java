@@ -16,8 +16,8 @@ import java.util.Objects;
 @NoArgsConstructor
 public class Aluguel {
     private Integer idAluguel;
-    private Cliente cliente;
-    private Carro carro;
+    private Integer idCliente;
+    private Integer idCarro;
     private LocalDate diaDoAluguel;
     private LocalDate diaDaEntrega;
 

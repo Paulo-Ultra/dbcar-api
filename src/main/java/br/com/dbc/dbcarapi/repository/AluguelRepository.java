@@ -71,8 +71,8 @@ public class AluguelRepository {
             PreparedStatement stmt = con.prepareStatement(sql);
 
             stmt.setInt(1, aluguel.getIdAluguel());
-            stmt.setInt(2, aluguel.getCliente().getIdCliente());
-            stmt.setInt(3, aluguel.getCarro().getIdCarro());
+            stmt.setInt(2, aluguel.getIdCliente());
+            stmt.setInt(3, aluguel.getIdCarro());
             stmt.setDate(4, Date.valueOf(aluguel.getDiaDoAluguel()));
             stmt.setDate(5, Date.valueOf(aluguel.getDiaDaEntrega()));
 
@@ -96,14 +96,16 @@ public class AluguelRepository {
         try {
             StringBuilder sql = new StringBuilder();
             sql.append("UPDATE ALUGUEL SET ");
+            sql.append(" ID_CLIENTE = ?, ");
+            sql.append(" ID_CARRO = ?, ");
             sql.append(" Dia do Aluguel = ?, ");
-            sql.append(" Dia da Entrega = ?, ");
+            sql.append(" Dia da Entrega = ? ");
             sql.append(" WHERE id_aluguel = ? ");
 
             PreparedStatement stmt = con.prepareStatement(sql.toString());
 
-            stmt.setInt(1, aluguel.getCliente().getIdCliente());
-            stmt.setInt(2, aluguel.getCarro().getIdCarro());
+            stmt.setInt(1, aluguel.getIdCliente());
+            stmt.setInt(2, aluguel.getIdCarro());
             stmt.setDate(3, Date.valueOf(aluguel.getDiaDoAluguel()));
             stmt.setDate(4, Date.valueOf(aluguel.getDiaDaEntrega()));
             stmt.setInt(5, idAluguel);
@@ -177,10 +179,10 @@ public class AluguelRepository {
         try {
             Aluguel aluguel = new Aluguel();
             aluguel.setIdAluguel(result.getInt("id_aluguel"));
-            aluguel.getCliente().setIdCliente(result.getInt("id_cliente"));
-            aluguel.getCarro().setIdCarro(result.getInt("id_carro"));
-            aluguel.setDiaDoAluguel(LocalDate.ofEpochDay(result.getInt("diaDoAluguel")));
-            aluguel.setDiaDaEntrega(LocalDate.ofEpochDay(result.getInt("diaDaEntrega")));
+            aluguel.setIdCliente(result.getInt("id_cliente"));
+            aluguel.setIdCarro(result.getInt("id_carro"));
+            aluguel.setDiaDoAluguel(LocalDate.parse(String.valueOf(result.getDate("diaDoAluguel"))));
+            aluguel.setDiaDaEntrega(LocalDate.parse(String.valueOf(result.getDate("diaDaEntrega"))));
             return aluguel;
         } catch (SQLException e) {
             e.printStackTrace();
