@@ -30,18 +30,20 @@ public class ClienteRepository {
     }
 
     public List<Cliente> list() throws SQLException {
-        Connection con = conexaoBancoDeDados.getConnection();
         List<Cliente> clientes = new ArrayList<>();
+
+        Connection con = conexaoBancoDeDados.getConnection();
         try {
 
-            StringBuilder sql = new StringBuilder("SELECT * FROM CLIENTE");
+            String sql = "SELECT * FROM CLIENTE";
 
-            PreparedStatement stmt = con.prepareStatement(sql.toString());
+            PreparedStatement stmt = con.prepareStatement(sql);
             ResultSet result = stmt.executeQuery();
 
             while (result.next()) {
                 clientes.add(compile(result));
             }
+            return clientes;
         } catch (SQLException e) {
             throw new BancoDeDadosException(e.getCause());
         } finally {
@@ -53,13 +55,15 @@ public class ClienteRepository {
                 e.printStackTrace();
             }
         }
-        return clientes;
     }
 
     public Cliente create(Cliente cliente) throws SQLException {
+
         Connection con = conexaoBancoDeDados.getConnection();
+
         try {
             cliente.setIdCliente(getProximoIdCliente(con));
+
             String sql = "INSERT INTO CLIENTE\n" +
                     "(ID_CLIENTE, NOME, CPF, TELEFONE, ENDERECO, EMAIL)\n" +
                     "VALUES(?, ?, ?, ?, ?, ?)\n";
@@ -73,7 +77,7 @@ public class ClienteRepository {
             stmt.setString(5, cliente.getEndereco());
             stmt.setString(6, cliente.getEmail());
 
-            int res = stmt.executeUpdate();
+            stmt.executeUpdate();
 
             return cliente;
         }  catch (SQLException e) {
@@ -90,16 +94,18 @@ public class ClienteRepository {
     }
 
     public Cliente update(Integer idCliente, Cliente cliente) throws SQLException {
+
         Connection con = conexaoBancoDeDados.getConnection();
+
         try {
             StringBuilder sql = new StringBuilder();
             sql.append("UPDATE CLIENTE SET ");
-            sql.append(" nome = ?, ");
-            sql.append(" cpf = ?, ");
-            sql.append(" telefone = ?, ");
-            sql.append(" endereco = ?, ");
-            sql.append(" email = ? ");
-            sql.append(" WHERE id_cliente = ? ");
+            sql.append(" NOME = ?, ");
+            sql.append(" CPF = ?, ");
+            sql.append(" TELEFONE = ?, ");
+            sql.append(" ENDERECO = ?, ");
+            sql.append(" EMAIL = ? ");
+            sql.append(" WHERE ID_CLIENTE = ? ");
 
             PreparedStatement stmt = con.prepareStatement(sql.toString());
 
@@ -110,7 +116,8 @@ public class ClienteRepository {
             stmt.setString(5, cliente.getEmail());
             stmt.setInt(6, idCliente);
 
-            int res = stmt.executeUpdate();
+            stmt.executeUpdate();
+
             return cliente;
         } catch (SQLException e) {
             throw new BancoDeDadosException(e.getCause());

@@ -72,7 +72,7 @@ public class ClienteController {
             }
     )
     @PutMapping("/{idCliente}")
-    public ResponseEntity<ClienteDTO> update(@PathVariable("idCliente") Integer idCliente, @RequestBody @Valid ClienteCreateDTO clienteAtualizar) throws Exception {
+    public ResponseEntity<ClienteDTO> update(@PathVariable("idCliente") Integer idCliente, @RequestBody @Valid ClienteCreateDTO clienteAtualizar) throws SQLException {
         return new ResponseEntity<>(clienteService.update(idCliente, clienteAtualizar), HttpStatus.OK);
     }
 

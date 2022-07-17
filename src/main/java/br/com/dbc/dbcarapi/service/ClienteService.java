@@ -3,6 +3,7 @@ package br.com.dbc.dbcarapi.service;
 import br.com.dbc.dbcarapi.dto.ClienteCreateDTO;
 import br.com.dbc.dbcarapi.dto.ClienteDTO;
 import br.com.dbc.dbcarapi.entity.Cliente;
+import br.com.dbc.dbcarapi.exception.BancoDeDadosException;
 import br.com.dbc.dbcarapi.repository.ClienteRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -22,56 +23,74 @@ public class ClienteService {
     @Autowired
     private ClienteRepository clienteRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     public List<ClienteDTO> list() throws SQLException {
-        return clienteRepository.list().stream()
-                .map(cliente -> convertClienteDTO(cliente))
-                .collect(Collectors.toList());
+        log.info("Listando clientes...");
+        try {
+            return clienteRepository.list().stream()
+                    .map(cliente -> convertClienteDTO(cliente))
+                    .collect(Collectors.toList());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new BancoDeDadosException(e.getCause());
+        }
     }
 
-    public ClienteDTO findByIdCliente(Integer idCliente) throws Exception {
+    public ClienteDTO findByIdCliente(Integer idCliente) throws SQLException {
         Cliente clienteRecuperado = clienteRepository.findByIdCliente(idCliente);
         if(clienteRecuperado != null){
             return convertClienteDTO(clienteRecuperado);
         } else {
-            throw new Exception("Cliente não encontrado");
+            throw new SQLException("Cliente não encontrado");
         }
     }
 
     public ClienteDTO create(ClienteCreateDTO cliente) throws SQLException {
         log.info("Adicionando um novo cliente ao banco de dados...");
-
         Cliente clienteEntity = convertClienteEntity(cliente);
-        Cliente clienteCriado = clienteRepository.create(clienteEntity);
-
-        ClienteDTO clienteDTO = convertClienteDTO(clienteCriado);
-
-        log.info("O cliente " + clienteDTO.getNome() + " foi adicionado com sucesso!");
+        try {
+            clienteEntity = clienteRepository.create(clienteEntity);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new BancoDeDadosException(e.getCause());
+        }
+        ClienteDTO clienteDTO = convertClienteDTO(clienteEntity);
+        log.info("O cliente " + clienteDTO.getNome() + " foi adicionado com sucesso ao banco de dados!");
+        emailService.sendEmailCliente(clienteDTO);
         return clienteDTO;
     }
 
-    public ClienteDTO update(Integer idCliente, ClienteCreateDTO clienteCreateDTO) throws Exception {
+    public ClienteDTO update(Integer idCliente, ClienteCreateDTO clienteCreateDTO) throws SQLException {
         log.info("Atualizando dados do cliente...");
-
         findByIdCliente(idCliente);
-
         Cliente clienteEntity = convertClienteEntity(clienteCreateDTO);
-        Cliente clienteAtualizar = clienteRepository.update(idCliente, clienteEntity);
-        ClienteDTO clienteDTO = convertClienteDTO(clienteAtualizar);
+        try {
+            clienteEntity = clienteRepository.update(idCliente, clienteEntity);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new BancoDeDadosException(e.getCause());
+        }
+        ClienteDTO clienteDTO = convertClienteDTO(clienteEntity);
         clienteDTO.setIdCliente(idCliente);
 
         log.info("Dados do cliente " + clienteDTO.getNome() + " foram atualizados.");
         return clienteDTO;
-
     }
 
     public void delete(Integer idCliente) throws SQLException {
         log.info("Removendo cliente...");
-
-        Cliente verifyCliente = clienteRepository.findByIdCliente(idCliente);
-
-        clienteRepository.delete(idCliente);
-
-        log.info("O cliente " + verifyCliente.getNome() + " foi removido com sucesso!");
+        try {
+            Cliente verifyCliente = clienteRepository.findByIdCliente(idCliente);
+            clienteRepository.delete(idCliente);
+            log.info("O cliente " + verifyCliente.getNome() + " foi removido com sucesso!");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new BancoDeDadosException(e.getCause());
+        } catch (NullPointerException e) {
+            throw new NullPointerException("O identificador (ID) informado não consta no nosso banco de dados!");
+        }
     }
 
     private Cliente convertClienteEntity(ClienteCreateDTO cliente) {
