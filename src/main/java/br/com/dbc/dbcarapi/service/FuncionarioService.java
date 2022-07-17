@@ -1,10 +1,7 @@
 package br.com.dbc.dbcarapi.service;
 
-import br.com.dbc.dbcarapi.dto.CarroDTO;
 import br.com.dbc.dbcarapi.dto.FuncionarioCreateDTO;
 import br.com.dbc.dbcarapi.dto.FuncionarioDTO;
-import br.com.dbc.dbcarapi.entity.Carro;
-import br.com.dbc.dbcarapi.entity.Cliente;
 import br.com.dbc.dbcarapi.entity.Funcionario;
 import br.com.dbc.dbcarapi.repository.FuncionarioRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;

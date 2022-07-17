@@ -1,12 +1,8 @@
 package br.com.dbc.dbcarapi.service;
 
-import br.com.dbc.dbcarapi.dto.CarroCreateDTO;
-import br.com.dbc.dbcarapi.dto.CarroDTO;
 import br.com.dbc.dbcarapi.dto.UsuarioCreateDTO;
 import br.com.dbc.dbcarapi.dto.UsuarioDTO;
-import br.com.dbc.dbcarapi.entity.Carro;
 import br.com.dbc.dbcarapi.entity.Usuario;
-import br.com.dbc.dbcarapi.repository.CarroRepository;
 import br.com.dbc.dbcarapi.repository.UsuarioRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;

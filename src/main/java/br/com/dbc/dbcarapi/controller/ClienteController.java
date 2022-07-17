@@ -1,12 +1,7 @@
 package br.com.dbc.dbcarapi.controller;
 
-import br.com.dbc.dbcarapi.dto.CarroCreateDTO;
-import br.com.dbc.dbcarapi.dto.CarroDTO;
 import br.com.dbc.dbcarapi.dto.ClienteCreateDTO;
 import br.com.dbc.dbcarapi.dto.ClienteDTO;
-import br.com.dbc.dbcarapi.entity.Carro;
-import br.com.dbc.dbcarapi.entity.Cliente;
-import br.com.dbc.dbcarapi.exception.BancoDeDadosException;
 import br.com.dbc.dbcarapi.service.ClienteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

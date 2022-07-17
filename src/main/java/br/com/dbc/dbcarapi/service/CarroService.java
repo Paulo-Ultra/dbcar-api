@@ -46,7 +46,6 @@ public class CarroService {
             carroDTO.setIdCarro(idCarro);
             log.info("Dados do carro atualizados " + carroAtualizar);
             return carroDTO;
-
     }
 
     public void delete(Integer idCarro) throws SQLException {

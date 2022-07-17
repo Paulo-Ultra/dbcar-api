@@ -3,7 +3,6 @@ package br.com.dbc.dbcarapi.service;
 import br.com.dbc.dbcarapi.dto.ClienteCreateDTO;
 import br.com.dbc.dbcarapi.dto.ClienteDTO;
 import br.com.dbc.dbcarapi.entity.Cliente;
-import br.com.dbc.dbcarapi.exception.BancoDeDadosException;
 import br.com.dbc.dbcarapi.repository.ClienteRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;

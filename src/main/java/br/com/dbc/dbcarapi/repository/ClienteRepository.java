@@ -1,9 +1,6 @@
 package br.com.dbc.dbcarapi.repository;
 
 import br.com.dbc.dbcarapi.connection.ConexaoBancoDeDados;
-import br.com.dbc.dbcarapi.dto.ClienteCreateDTO;
-import br.com.dbc.dbcarapi.dto.ClienteDTO;
-import br.com.dbc.dbcarapi.entity.Carro;
 import br.com.dbc.dbcarapi.entity.Cliente;
 import br.com.dbc.dbcarapi.exception.BancoDeDadosException;
 import org.springframework.beans.factory.annotation.Autowired;

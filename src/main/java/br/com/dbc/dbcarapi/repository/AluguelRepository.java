@@ -1,24 +1,25 @@
 package br.com.dbc.dbcarapi.repository;
 
 import br.com.dbc.dbcarapi.connection.ConexaoBancoDeDados;
-import br.com.dbc.dbcarapi.entity.Usuario;
+import br.com.dbc.dbcarapi.entity.Aluguel;
 import br.com.dbc.dbcarapi.exception.BancoDeDadosException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class UsuarioRepository {
+public class AluguelRepository {
 
     @Autowired
     private ConexaoBancoDeDados conexaoBancoDeDados;
 
     public Integer getProximoId(Connection connection) throws SQLException {
         Connection con = conexaoBancoDeDados.getConnection();
-        String sql = "SELECT seq_usuario.nextval mysequence from DUAL";
+        String sql = "SELECT seq_carro.nextval mysequence from DUAL";
 
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(sql);
@@ -29,18 +30,19 @@ public class UsuarioRepository {
         return null;
     }
 
-    public List<Usuario> list() throws SQLException {
+    public List<Aluguel> list() throws SQLException {
         Connection con = conexaoBancoDeDados.getConnection();
-        List<Usuario> usuarios = new ArrayList<>();
+        List<Aluguel> alugueis = new ArrayList<>();
         try {
             Statement stmt = con.createStatement();
-            String sql = "SELECT * FROM USUARIO";
+
+            String sql = "SELECT * FROM ALUGUEL";
 
             ResultSet res = stmt.executeQuery(sql);
 
             while (res.next()) {
-                Usuario user = compile(res);
-                usuarios.add(user);
+                Aluguel aluguel = compile(res);
+                alugueis.add(aluguel);
             }
         } catch (SQLException e) {
             throw new BancoDeDadosException(e.getCause());
@@ -53,26 +55,29 @@ public class UsuarioRepository {
                 e.printStackTrace();
             }
         }
-        return usuarios;
+        return alugueis;
     }
 
-    public Usuario create(Usuario usuario) throws SQLException {
+    public Aluguel create(Aluguel aluguel) throws SQLException {
         Connection con = conexaoBancoDeDados.getConnection();
         try {
             Integer proximoId = this.getProximoId(con);
-            usuario.setIdUsuario(proximoId);
+            aluguel.setIdAluguel(proximoId);
 
-            String sql = "INSERT INTO USUARIO\n" +
-                    "(ID_USUARIO, NOME)\n" +
-                    "VALUES(?, ?)\n";
+            String sql = "INSERT INTO ALUGUEL\n" +
+                    "(ID_ALUGUEL, ID_CLIENTE, ID_CARRO, diaDoAluguel, diaDaEntrega)\n" +
+                    "VALUES(?, ?, ?, ?, ?)\n";
 
             PreparedStatement stmt = con.prepareStatement(sql);
 
-            stmt.setInt(1, usuario.getIdUsuario());
-            stmt.setString(2, usuario.getNome());
+            stmt.setInt(1, aluguel.getIdAluguel());
+            stmt.setInt(2, aluguel.getCliente().getIdCliente());
+            stmt.setInt(3, aluguel.getCarro().getIdCarro());
+            stmt.setDate(4, Date.valueOf(aluguel.getDiaDoAluguel()));
+            stmt.setDate(5, Date.valueOf(aluguel.getDiaDaEntrega()));
 
             int res = stmt.executeUpdate();
-            return usuario;
+            return aluguel;
         } catch (SQLException e) {
             throw new BancoDeDadosException(e.getCause());
         } finally {
@@ -86,21 +91,46 @@ public class UsuarioRepository {
         }
     }
 
-    public Usuario update(Integer idUsuario, Usuario usuario) throws SQLException {
+        public Aluguel update(Integer idAluguel, Aluguel aluguel) throws SQLException {
+            Connection con = conexaoBancoDeDados.getConnection();
+            try {
+                StringBuilder sql = new StringBuilder();
+                sql.append("UPDATE ALUGUEL SET ");
+                sql.append(" Dia do Aluguel = ?,");
+                sql.append(" Dia da Entrega = ?,");
+                sql.append((" WHERE id_aluguel = ? "));
+
+                PreparedStatement stmt = con.prepareStatement(sql.toString());
+
+                stmt.setInt(1, aluguel.getCliente().getIdCliente());
+                stmt.setInt(2, aluguel.getCarro().getIdCarro());
+                stmt.setDate(3, Date.valueOf(aluguel.getDiaDoAluguel()));
+                stmt.setDate(4, Date.valueOf(aluguel.getDiaDaEntrega()));
+                stmt.setInt(5, idAluguel);
+
+                int res = stmt.executeUpdate();
+                return aluguel;
+            } catch (SQLException e) {
+                throw new BancoDeDadosException(e.getCause());
+            } finally {
+                try {
+                    if (con != null) {
+                        con.close();
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    public void delete(Integer idAluguel) throws SQLException {
         Connection con = conexaoBancoDeDados.getConnection();
         try {
-            StringBuilder sql = new StringBuilder();
-            sql.append("UPDATE USUARIO SET ");
-            sql.append(" nome = ? ");
-            sql.append(" WHERE ID_USUARIO = ? ");
-
-            PreparedStatement stmt = con.prepareStatement(sql.toString());
-
-            stmt.setString(1, usuario.getNome());
-            stmt.setInt(2, idUsuario);
+            String sql = "DELETE FROM ALUGUEL WHERE id_aluguel = ?";
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setInt(1, idAluguel);
 
             int res = stmt.executeUpdate();
-            return usuario;
         } catch (SQLException e) {
             throw new BancoDeDadosException(e.getCause());
         } finally {
@@ -114,33 +144,12 @@ public class UsuarioRepository {
         }
     }
 
-    public void delete(Integer idUsuario) throws SQLException {
+    public Aluguel findById(Integer idAluguel) throws SQLException {
         Connection con = conexaoBancoDeDados.getConnection();
         try {
-            String sql = "DELETE FROM USUARIO WHERE id_usuario = ?";
+            String sql = "SELECT * FROM ALUGUEL WHERE id_aluguel = ?";
             PreparedStatement stmt = con.prepareStatement(sql);
-            stmt.setInt(1, idUsuario);
-
-            int res = stmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new BancoDeDadosException(e.getCause());
-        } finally {
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public Usuario findById(Integer idUsuario) throws SQLException {
-        Connection con = conexaoBancoDeDados.getConnection();
-        try {
-            String sql = "SELECT * FROM USUARIO WHERE id_usuario = ?";
-            PreparedStatement stmt = con.prepareStatement(sql);
-            stmt.setInt(1, idUsuario);
+            stmt.setInt(1, idAluguel);
             ResultSet result = stmt.executeQuery();
 
             if (result.next()) {
@@ -160,15 +169,19 @@ public class UsuarioRepository {
         return null;
     }
 
-    public static Usuario compile(ResultSet result) {
+    public static Aluguel compile(ResultSet result) {
         try {
-            Usuario user = new Usuario();
-            user.setIdUsuario(result.getInt("id_usuario"));
-            user.setNome(result.getString("nome"));
-            return user;
+            Aluguel aluguel = new Aluguel();
+            aluguel.setIdAluguel(result.getInt("id_Aluguel"));
+            aluguel.getCliente().setIdCliente(result.getInt("id_cliente"));
+            aluguel.getCarro().setIdCarro(result.getInt("id_carro"));
+            aluguel.setDiaDoAluguel(LocalDate.ofEpochDay(result.getInt("diaDoAluguel")));
+            aluguel.setDiaDaEntrega(LocalDate.ofEpochDay(result.getInt("diaDaEntrega")));
+            return aluguel;
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
+
 }

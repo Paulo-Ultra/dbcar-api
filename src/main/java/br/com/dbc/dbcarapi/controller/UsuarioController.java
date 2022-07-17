@@ -1,7 +1,5 @@
 package br.com.dbc.dbcarapi.controller;
 
-import br.com.dbc.dbcarapi.dto.CarroCreateDTO;
-import br.com.dbc.dbcarapi.dto.CarroDTO;
 import br.com.dbc.dbcarapi.dto.UsuarioCreateDTO;
 import br.com.dbc.dbcarapi.dto.UsuarioDTO;
 import br.com.dbc.dbcarapi.service.UsuarioService;
