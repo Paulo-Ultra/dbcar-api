@@ -14,6 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,8 +47,14 @@ public class AluguelService {
         log.info("Adicionando o novo aluguel...");
         Aluguel aluguelEntity = convertAluguelEntity(aluguel);
         try {
-            aluguelEntity = aluguelRepository.create(aluguelEntity);
-            carroRepository.editarAlugado(aluguel.getIdCarro(), false);
+            Carro carro = carroRepository.findById(aluguel.getIdCarro());
+            if(carro.getAlugado().equals(true)) {
+                aluguel.setValor(calcularDiarias(aluguelEntity));
+                aluguelEntity = aluguelRepository.create(aluguelEntity);
+                carroRepository.editarAlugado(aluguel.getIdCarro(), false);
+            } else {
+                throw new Exception("Carro indisponível para aluguel");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             throw new BancoDeDadosException(e.getCause());
@@ -94,24 +103,45 @@ public class AluguelService {
         }
     }
 
-    public Double calcularValor(Carro carro, Aluguel aluguel) throws Exception {
-        switch (carro.getClasse().getTipo()) {
-            case "A":
-                return diasComCarro(aluguel) * carro.getPrecoDiaria() * 1.5;
-            case "B":
-                return diasComCarro(aluguel) * carro.getPrecoDiaria() * 1.2;
-            case "C":
-                return diasComCarro(aluguel) * carro.getPrecoDiaria();
-            default:
-                System.out.println("O carro informado não está disponível.");
-                return null;
+    private Double calcularDiarias(Aluguel aluguel) throws SQLException {
+        LocalDate d2 = LocalDate.parse(aluguel.getDiaDoAluguel().toString(), DateTimeFormatter.ISO_LOCAL_DATE);
+        LocalDate d1 = LocalDate.parse(aluguel.getDiaDaEntrega().toString(), DateTimeFormatter.ISO_LOCAL_DATE);
+        Duration diff = Duration.between(d1.atStartOfDay(), d2.atStartOfDay());
+        long diffDays = diff.toDays();
+        Carro carro = carroRepository.findById(aluguel.getIdCarro());
+        if (carro.getClasse().getTipo() == "A") {
+            return diffDays * carro.getPrecoDiaria() * 1.5;
+        } else if (carro.getClasse().getTipo() == "B") {
+            return diffDays * carro.getPrecoDiaria() * 1.2;
+        } else {
+            return diffDays * carro.getPrecoDiaria();
         }
     }
 
-    public Long diasComCarro(Aluguel aluguel) {
-        Long diasComCarro = aluguel.getDiaDoAluguel().until(aluguel.getDiaDaEntrega(), ChronoUnit.DAYS);
-        return diasComCarro;
-    }
+//    public List<CarroDTO> carrosAlugados () throws SQLException {
+//        return carroRepository.list().stream()
+//                .map(carro -> {
+//                    CarroDTO carroDTO = new CarroDTO();
+//                    if (carro.getAlugado().equals(false)) {
+//                        carroDTO.setIdCarro(carro.getIdCarro());
+//                        carroDTO.setAlugado(carro.getAlugado());
+//                        carroDTO.setNomeCarro(carro.getNomeCarro());
+//                        carroDTO.setMarca(carro.getMarca());
+//                        carroDTO.setClasse(carro.getClasse());
+//                        carroDTO.setQntPassageiros(carro.getQntPassageiros());
+//                        carroDTO.setKmRodados(carro.getKmRodados());
+//                        carroDTO.setPrecoDiaria(carro.getPrecoDiaria());
+//                    }
+//                        try {
+//                            aluguelRepository.create(new Aluguel());
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                            e.getCause();
+//                        }
+//                    return carroDTO;
+//                })
+//                .toList();
+//    }
 
     public Aluguel convertAluguelEntity(AluguelCreateDTO aluguel) {
         return objectMapper.convertValue(aluguel, Aluguel.class);
