@@ -5,6 +5,7 @@ import br.com.dbc.dbcarapi.dto.AluguelDTO;
 import br.com.dbc.dbcarapi.dto.CarroDTO;
 import br.com.dbc.dbcarapi.entity.Aluguel;
 import br.com.dbc.dbcarapi.entity.Carro;
+import br.com.dbc.dbcarapi.enums.Alugado;
 import br.com.dbc.dbcarapi.exception.BancoDeDadosException;
 import br.com.dbc.dbcarapi.repository.AluguelRepository;
 import br.com.dbc.dbcarapi.repository.CarroRepository;
@@ -48,10 +49,10 @@ public class AluguelService {
         Aluguel aluguelEntity = convertAluguelEntity(aluguel);
         try {
             Carro carro = carroRepository.findById(aluguel.getIdCarro());
-            if(carro.getAlugado().equals(true)) {
-                aluguel.setValor(calcularDiarias(aluguelEntity));
-                aluguelEntity = aluguelRepository.create(aluguelEntity);
-                carroRepository.editarAlugado(aluguel.getIdCarro(), false);
+            if(carro.getAlugado().equals(Alugado.DISPONIVEL)) {
+            aluguelEntity = aluguelRepository.create(aluguelEntity);
+            carroRepository.editarAlugado(aluguel.getIdCarro(), false);
+            aluguelEntity.setValor(calcularDiarias(aluguelEntity));
             } else {
                 throw new Exception("Carro indisponível para aluguel");
             }
@@ -104,8 +105,8 @@ public class AluguelService {
     }
 
     private Double calcularDiarias(Aluguel aluguel) throws SQLException {
-        LocalDate d2 = LocalDate.parse(aluguel.getDiaDoAluguel().toString(), DateTimeFormatter.ISO_LOCAL_DATE);
-        LocalDate d1 = LocalDate.parse(aluguel.getDiaDaEntrega().toString(), DateTimeFormatter.ISO_LOCAL_DATE);
+        LocalDate d1 = LocalDate.parse(aluguel.getDiaDoAluguel().toString(), DateTimeFormatter.ISO_LOCAL_DATE);
+        LocalDate d2 = LocalDate.parse(aluguel.getDiaDaEntrega().toString(), DateTimeFormatter.ISO_LOCAL_DATE);
         Duration diff = Duration.between(d1.atStartOfDay(), d2.atStartOfDay());
         long diffDays = diff.toDays();
         Carro carro = carroRepository.findById(aluguel.getIdCarro());

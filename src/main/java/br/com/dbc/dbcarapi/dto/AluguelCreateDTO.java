@@ -2,6 +2,7 @@ package br.com.dbc.dbcarapi.dto;
 
 import br.com.dbc.dbcarapi.entity.Carro;
 import br.com.dbc.dbcarapi.entity.Cliente;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
