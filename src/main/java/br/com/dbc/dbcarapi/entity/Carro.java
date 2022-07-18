@@ -15,18 +15,11 @@ import java.util.Objects;
 public class Carro {
 
     private Integer idCarro;
-
     private Alugado alugado;
-
     private String nomeCarro;
-
     private String marca;
-
     private ClasseCarro classe;
-
     private Integer qntPassageiros;
-
     private Integer kmRodados;
-
     private Double precoDiaria;
 }

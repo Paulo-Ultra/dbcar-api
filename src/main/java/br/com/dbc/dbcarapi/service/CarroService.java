@@ -2,7 +2,6 @@ package br.com.dbc.dbcarapi.service;
 
 import br.com.dbc.dbcarapi.dto.CarroCreateDTO;
 import br.com.dbc.dbcarapi.dto.CarroDTO;
-import br.com.dbc.dbcarapi.entity.Aluguel;
 import br.com.dbc.dbcarapi.entity.Carro;
 import br.com.dbc.dbcarapi.exception.BancoDeDadosException;
 import br.com.dbc.dbcarapi.repository.CarroRepository;
@@ -84,7 +83,7 @@ public class CarroService {
 
     public List<CarroDTO> listNaoAlugados() throws SQLException {
         try {
-            return carroRepository.listarNaoAlugaDos().stream()
+            return carroRepository.listarNaoAlugados().stream()
                     .map(carro -> objectMapper.convertValue(carro, CarroDTO.class))
                     .collect(Collectors.toList());
         } catch (SQLException e) {

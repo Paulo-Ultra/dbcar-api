@@ -208,7 +208,7 @@ public class CarroRepository {
         }
     }
 
-    public List<Carro> listarNaoAlugaDos() throws SQLException {
+    public List<Carro> listarNaoAlugados() throws SQLException {
         Connection con = conexaoBancoDeDados.getConnection();
         List<Carro> carros = new ArrayList<>();
         try {
