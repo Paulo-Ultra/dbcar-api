@@ -173,6 +173,26 @@ public class ClienteRepository {
         return null;
     }
 
+    public Cliente findByCpfCliente(Integer idCliente) throws SQLException {
+        Connection con = conexaoBancoDeDados.getConnection();
+        try {
+            StringBuilder sql = new StringBuilder("SELECT CPF FROM CLIENTE");
+            sql.append(" WHERE id_cliente = ?");
+
+            PreparedStatement stmt = con.prepareStatement(sql.toString());
+            stmt.setInt(1, idCliente);
+
+            ResultSet result = stmt.executeQuery();
+
+            if (result.next()) {
+                return compile(result);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static Cliente compile(ResultSet result) {
         try {
             Cliente cliente = new Cliente();
