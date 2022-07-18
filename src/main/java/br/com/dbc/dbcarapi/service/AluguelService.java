@@ -118,31 +118,6 @@ public class AluguelService {
         }
     }
 
-//    public List<CarroDTO> carrosAlugados () throws SQLException {
-//        return carroRepository.list().stream()
-//                .map(carro -> {
-//                    CarroDTO carroDTO = new CarroDTO();
-//                    if (carro.getAlugado().equals(false)) {
-//                        carroDTO.setIdCarro(carro.getIdCarro());
-//                        carroDTO.setAlugado(carro.getAlugado());
-//                        carroDTO.setNomeCarro(carro.getNomeCarro());
-//                        carroDTO.setMarca(carro.getMarca());
-//                        carroDTO.setClasse(carro.getClasse());
-//                        carroDTO.setQntPassageiros(carro.getQntPassageiros());
-//                        carroDTO.setKmRodados(carro.getKmRodados());
-//                        carroDTO.setPrecoDiaria(carro.getPrecoDiaria());
-//                    }
-//                        try {
-//                            aluguelRepository.create(new Aluguel());
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                            e.getCause();
-//                        }
-//                    return carroDTO;
-//                })
-//                .toList();
-//    }
-
     public Aluguel convertAluguelEntity(AluguelCreateDTO aluguel) {
         return objectMapper.convertValue(aluguel, Aluguel.class);
     }
