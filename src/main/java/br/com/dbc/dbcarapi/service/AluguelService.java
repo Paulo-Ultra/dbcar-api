@@ -9,6 +9,7 @@ import br.com.dbc.dbcarapi.enums.Alugado;
 import br.com.dbc.dbcarapi.exception.BancoDeDadosException;
 import br.com.dbc.dbcarapi.repository.AluguelRepository;
 import br.com.dbc.dbcarapi.repository.CarroRepository;
+import br.com.dbc.dbcarapi.repository.ClienteRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,11 @@ public class AluguelService {
     private AluguelRepository aluguelRepository;
     @Autowired
     private CarroRepository carroRepository;
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private ClienteRepository clienteRepository;
 
     public List<AluguelDTO> list() throws SQLException {
         try {
@@ -62,6 +68,8 @@ public class AluguelService {
         }
         AluguelDTO aluguelDTO = convertAluguelDTO(aluguelEntity);
         log.info("O novo aluguel no dia " + aluguelDTO.getDiaDoAluguel() + " foi adicionado com sucesso.");
+        String tipo = "alugado";
+        emailService.sendEmailCarroCliente(clienteRepository.findByIdCliente(aluguel.getIdCliente()), aluguelDTO, tipo);
         return aluguelDTO;
     }
 
@@ -70,13 +78,15 @@ public class AluguelService {
         findByIdAluguel(idAluguel);
         Aluguel aluguelEntity = convertAluguelEntity(aluguelCreateDTO);
         try {
-            aluguelEntity = aluguelRepository.create(aluguelEntity);
+            carroRepository.findById(aluguelCreateDTO.getIdCarro());
+                aluguelEntity = aluguelRepository.update(idAluguel, aluguelEntity);
         } catch (SQLException e) {
             e.printStackTrace();
             throw new BancoDeDadosException(e.getCause());
         }
         AluguelDTO aluguelDTO = convertAluguelDTO(aluguelEntity);
         aluguelDTO.setIdAluguel(idAluguel);
+        aluguelDTO.setValor(calcularDiarias(aluguelEntity));
         log.info("Dados do aluguel atualizados " + aluguelDTO);
         return aluguelDTO;
     }
@@ -100,7 +110,7 @@ public class AluguelService {
         if (aluguelRecuperado != null) {
             return convertAluguelDTO(aluguelRecuperado);
         } else {
-            throw new Exception("Carro não encontrado");
+            throw new Exception("Aluguel não encontrado");
         }
     }
 

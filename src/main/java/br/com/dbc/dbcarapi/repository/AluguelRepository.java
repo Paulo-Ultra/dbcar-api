@@ -99,8 +99,8 @@ public class AluguelRepository {
             sql.append("UPDATE ALUGUEL SET ");
             sql.append(" ID_CLIENTE = ?, ");
             sql.append(" ID_CARRO = ?, ");
-            sql.append(" Dia do Aluguel = ?, ");
-            sql.append(" Dia da Entrega = ?, ");
+            sql.append(" DIADOALUGUEL = ?, ");
+            sql.append(" DIADAENTREGA = ?, ");
             sql.append(" Valor = ? ");
             sql.append(" WHERE id_aluguel = ? ");
 

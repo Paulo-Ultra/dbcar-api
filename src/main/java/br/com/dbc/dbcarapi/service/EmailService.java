@@ -2,6 +2,7 @@ package br.com.dbc.dbcarapi.service;
 
 import br.com.dbc.dbcarapi.dto.AluguelDTO;
 import br.com.dbc.dbcarapi.dto.ClienteDTO;
+import br.com.dbc.dbcarapi.entity.Cliente;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import lombok.RequiredArgsConstructor;
@@ -69,26 +70,26 @@ public class EmailService {
         return html;
     }
 
-    public void sendEmailCarroCliente(ClienteDTO clienteDTO, AluguelDTO aluguelDTO, String tipo) {
+    public void sendEmailCarroCliente(Cliente cliente, AluguelDTO aluguelDTO, String tipo) {
         MimeMessage mimeMessage = emailSender.createMimeMessage();
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
             mimeMessageHelper.setFrom(from);
-            mimeMessageHelper.setTo(clienteDTO.getEmail());
+            mimeMessageHelper.setTo(cliente.getEmail());
             if (tipo.equalsIgnoreCase("alugado")) {
                 mimeMessageHelper.setSubject("Carro alugado com sucesso!");
             }
-            mimeMessageHelper.setText(getContentFromTemplateAluguel(clienteDTO, aluguelDTO, tipo), true);
+            mimeMessageHelper.setText(getContentFromTemplateAluguel(cliente, aluguelDTO, tipo), true);
             emailSender.send(mimeMessageHelper.getMimeMessage());
         } catch (MessagingException | IOException | TemplateException e) {
             e.printStackTrace();
         }
     }
 
-    public String getContentFromTemplateAluguel(ClienteDTO clienteDTO, AluguelDTO aluguelDTO, String tipo) throws IOException, TemplateException {
+    public String getContentFromTemplateAluguel(Cliente cliente, AluguelDTO aluguelDTO, String tipo) throws IOException, TemplateException {
         Map<String, Object> dados = new HashMap<>();
-        dados.put("nome", clienteDTO.getNome());
-        dados.put("id", clienteDTO.getIdCliente());
+        dados.put("nome", cliente.getNome());
+        dados.put("id", cliente.getIdCliente());
         dados.put("idCarro", aluguelDTO.getIdCarro());
         dados.put("email", from);
 
